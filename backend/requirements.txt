@@ -1,0 +1,30 @@
+# --- Cấu hình kho tải (Quan trọng nhất) ---
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# --- Framework Web & API ---
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# --- Database ---
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# --- AI & Xử lý ảnh ---
+# Giờ đây pip sẽ tự tìm thấy bản +cpu nhờ dòng link ở đầu file
+torch==2.1.2+cpu
+torchvision==0.16.2+cpu
+facenet-pytorch==2.5.3
+numpy==1.26.3
+pillow==10.2.0
+opencv-python-headless==4.9.0.80
+
+# --- Tiện ích ---
+python-dotenv==1.0.1
+requests==2.31.0
+
+faiss-cpu==1.7.4
+pandas==2.2.0

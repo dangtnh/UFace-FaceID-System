@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # --- BACKEND ---
+  backend:
+    build:
+      context: ../backend        # Trỏ ra thư mục backend
+      dockerfile: Dockerfile
+    container_name: faceid_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend/app:/app/app       # Map code: Sửa ở máy thật -> Docker cập nhật luôn
+      - ../data:/app/data             # Map data: Để ảnh không bị mất
+      - ../backend/weights:/app/weights # Map model AI
+    env_file:
+      - ../.env                       # Đọc file cấu hình chung
+    depends_on:
+      - db
+    networks:
+      - faceid_network
+
+  # --- DATABASE ---
+  db:
+    image: postgres:15-alpine
+    container_name: faceid_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=faceid_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - faceid_network
+
+volumes:
+  postgres_data:
+
+networks:
+  faceid_network:
+    driver: bridge

@@ -1,0 +1,30 @@
+# --- 1. Python & Cache (Rác hệ thống sinh ra khi chạy code) ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- 2. Môi trường ảo (Chứa hàng ngàn file thư viện, không được push) ---
+venv/
+.venv/
+env/
+
+# --- 3. Biến môi trường & Bảo mật (QUAN TRỌNG NHẤT) ---
+# Chỉ push file .env.example, KHÔNG push file .env chứa mật khẩu thật
+.env
+.env.local
+
+# --- 4. IDE Settings (Cấu hình riêng của máy bạn) ---
+.vscode/
+.idea/
+*.swp
+
+# --- 5. Dữ liệu (Như đã bàn ở trên) ---
+# Ignore các file vector và model đã train
+data/vectors/*.index
+data/vectors/*.pkl
+data/weights/*.pt
+data/weights/*.pth
+data/weights/*.h5
+
+# Ignore ảnh nếu quá nặng (tuỳ chọn)
+data/images/

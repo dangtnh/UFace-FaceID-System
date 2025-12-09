@@ -35,22 +35,34 @@ class FaceService:
         if vec is None:
             return {"status": "No face detected", "similarity": 0}
 
+        # 1. Tìm người giống nhất (Luôn có kết quả nếu DB không rỗng)
         result = vector_db.search(vec)
 
-        # So sánh ngưỡng (Logic từ app.py cũ)
-        if result and result["similarity"] >= settings.RECOGNITION_THRESH:
-            # Tách chuỗi label
+        # 2. Giải mã thông tin người giống nhất (Candidate)
+        candidate = None
+        if result:
             parts = result["label"].split("|")
-            return {
-                "status": "Match",
+            candidate = {
                 "mssv": parts[0] if len(parts) > 0 else "",
                 "name": parts[1] if len(parts) > 1 else result["label"],
+            }
+
+        # 3. So sánh ngưỡng để ra quyết định
+        # Nếu giống >= ngưỡng (0.80 hoặc 0.65 tùy config) -> MATCH
+        if result and result["similarity"] >= settings.RECOGNITION_THRESH:
+            return {
+                "status": "Match",
+                "mssv": candidate["mssv"],
+                "name": candidate["name"],
                 "similarity": result["similarity"],
             }
 
+        # 4. Nếu giống thấp hơn ngưỡng -> UNKNOWN
+        # Nhưng vẫn trả về "best_match" để bạn biết nó đang nhầm với ai (Debug)
         return {
             "status": "Unknown",
             "similarity": result["similarity"] if result else 0,
+            "best_match": candidate,  # Trả về thông tin người giống nhất (hoặc None)
         }
 
 

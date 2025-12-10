@@ -25,10 +25,8 @@ services:
     image: postgres:15-alpine
     container_name: faceid_db
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password123
-      - POSTGRES_DB=faceid_db
+    env_file:
+      - ../.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

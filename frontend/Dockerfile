@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Tạo Prisma Client (Bước này cực quan trọng vì bạn dùng Prisma)
-RUN npx prisma generate
+# RUN npx prisma generate
 
 # Mở cổng 3000 (Express của bạn chạy cổng này)
 EXPOSE 3000

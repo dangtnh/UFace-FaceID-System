@@ -4,10 +4,10 @@ from app.services.face_service import face_service
 
 router = APIRouter()
 
-# Giả sử giờ vào lớp cố định là 8h sáng (Demo)
+# Cấu hình giờ vào lớp (Demo: 8h00, cho phép muộn 15p)
 START_TIME_HOUR = 8
 START_TIME_MINUTE = 0
-LATE_THRESHOLD_MINUTES = 15  # Cho phép đi muộn 15p
+LATE_THRESHOLD_MINUTES = 15
 
 
 @router.post("/recognize")
@@ -15,41 +15,48 @@ async def check_in(file: UploadFile = File(...)):
     # 1. Gọi AI nhận diện xem là ai
     result = await face_service.recognize_image(file)
 
+    # 2. Xử lý kết quả trả về từ AI
     if result["status"] != "Match":
 
-        detail_msg = (
-            "Unknown student" if result["status"] == "Unknown" else "No face detected"
-        )
-
-        # Trả về lỗi 404 nếu là Unknown, hoặc 400 nếu là lỗi xử lý ảnh
+        # TRƯỜNG HỢP 1: UNKNOWN (Có mặt nhưng không khớp ai trong DB)
+        # -> Trả về JSON bình thường để Frontend hiện popup cảnh báo (thay vì lỗi đỏ 404)
         if result["status"] == "Unknown":
-            raise HTTPException(status_code=404, detail=detail_msg)
+            return {
+                "status": "unknown",
+                "message": "Không tìm thấy dữ liệu sinh viên này trong hệ thống.",
+                "data": None,
+            }
+
+        # TRƯỜNG HỢP 2: LỖI ẢNH (Không thấy mặt, ảnh mờ...)
+        # -> Trả về lỗi 400 Bad Request
         else:
+            detail_msg = (
+                "No face detected"
+                if result["status"] == "NoFace"
+                else "Image processing error"
+            )
             raise HTTPException(status_code=400, detail=detail_msg)
 
-    # 2. Logic kiểm tra thời gian (Time Check)
+    # 3. Logic kiểm tra thời gian (Time Check) - Chỉ chạy khi đã Match
     now = datetime.now()
     check_in_time = now.strftime("%H:%M:%S")
 
-    # Tính thời gian muộn (Nếu hiện tại quá 8h15 thì là Muộn)
+    # Tính thời gian muộn
     is_late = False
-
-    # Kiểm tra nếu giờ hiện tại lớn hơn giờ bắt đầu
     if now.hour > START_TIME_HOUR:
         is_late = True
-
-    # Kiểm tra nếu cùng giờ bắt đầu nhưng phút vượt quá ngưỡng muộn
     elif now.hour == START_TIME_HOUR and now.minute > LATE_THRESHOLD_MINUTES:
         is_late = True
 
     attendance_status = "LATE" if is_late else "ON TIME"
 
-    # 3. Trả về kết quả cuối cùng cho Frontend hiển thị
+    # 4. Trả về kết quả thành công cho Frontend
     return {
+        "status": "success",  # Frontend check: if (status == 'success') ...
         "mssv": result["mssv"],
         "name": result["name"],
         "similarity": result["similarity"],
         "check_in_time": check_in_time,
-        "status": attendance_status,  # "ON TIME" hoặc "LATE"
+        "attendance_status": attendance_status,
         "message": f"Xin chào {result['name']}, bạn đi {'muộn' if is_late else 'đúng giờ'}!",
     }

@@ -24,10 +24,19 @@ cp .env.example .env
 mkdir -p data/images
 mkdir -p data/vectors
 
-docker compose -f deploy/docker-compose.dev.yml up -d --build
+docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d --build
 
-docker compose -f deploy/docker-compose.dev.yml exec frontend npx prisma db push
+docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push
 
-docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma generate
+docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push --skip-generate
 
 docker compose --env-file .env -f deploy/docker-compose.dev.yml restart backend
+
+==========
+
+docker compose --env-file .env -f deploy/docker-compose.dev.yml down
+docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d
+==========
+
+docker compose --env-file .env -f deploy/docker-compose.dev.yml down -v
+

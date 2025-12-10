@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  # --- BACKEND ---
+  # --- BACKEND (PYTHON) ---
   backend:
     build:
       context: ../backend
@@ -13,14 +11,19 @@ services:
       - ../backend/app:/app/app
       - ../data:/app/data
       - ../backend/weights:/app/weights
+      - ../prisma:/app/prisma
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}  
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - PYTHONPATH=/app:/app/app
     env_file:
       - ../.env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - faceid_network
+    # --- DÒNG QUAN TRỌNG: Ép sinh code Python rồi mới chạy server ---
+    command: sh -c "prisma generate && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
   # --- FRONTEND (NODEJS) ---
   frontend:
@@ -34,18 +37,19 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - PORT=3000
-
     env_file:
-      - ../.env 
-
+      - ../.env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ../frontend:/app
       - /app/node_modules
-    
+      - ../prisma:/app/prisma
     networks:
       - faceid_network
+    # --- DÒNG QUAN TRỌNG: Ép sinh code JS rồi mới chạy server ---
+    command: sh -c "npx prisma generate --generator client_js && npm start"
 
   # --- DATABASE ---
   db:
@@ -60,6 +64,12 @@ services:
       - "5432:5432"
     networks:
       - faceid_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 volumes:
   postgres_data:

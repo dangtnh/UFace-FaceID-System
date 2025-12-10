@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 5. Copy toàn bộ code vào
 COPY . .
 
-COPY prisma /app/prisma
+# COPY prisma /app/prisma
 
 # 6. Mở cổng 8000
 EXPOSE 8000

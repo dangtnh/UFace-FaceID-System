@@ -288,39 +288,53 @@
       refs.wrap.addEventListener('click',()=>highlightActive(k))
     });
 
-    form.addEventListener('submit', async (e)=>{
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      submitBtn.disabled=true;
-      submitBtn.textContent='Submitting...';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
 
       const fd = new FormData();
 
-      fd.append('full_name', document.getElementById('fullName').value.trim());
-      fd.append('student_id', document.getElementById('studentId').value.trim());
-      fd.append('school_email', document.getElementById('schoolEmail').value.trim());
+      // 1. Sửa key cho khớp với Backend (student.py)
+      fd.append('fullName', document.getElementById('fullName').value.trim());
+      fd.append('studentId', document.getElementById('studentId').value.trim());
+      fd.append('schoolEmail', document.getElementById('schoolEmail').value.trim());
 
-      Object.entries(captures).forEach(([k,blob])=>{
-        fd.append(`face_${k}`,blob,`${k}.jpg`)
+      // 2. Gom tất cả ảnh vào key 'face_images'
+      Object.entries(captures).forEach(([k, blob]) => {
+        fd.append('face_images', blob, `${k}.jpg`);
       });
 
-      try{
-        const res = await fetch('http://localhost:5000/api/register',{
-          method:'POST',
-          body:fd
-        }); 
+      try {
+        // 3. Gọi vào API mới (students/register)
+        const res = await fetch('http://localhost:8000/api/v1/students/register', {
+          method: 'POST',
+          body: fd
+        });
 
-        if(!res.ok) throw new Error(await res.text());
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.detail || 'Registration failed');
+        }
 
-        showToast('Registered successfully!');
+        const data = await res.json();
+        showToast(`Registered successfully: ${data.fullName}`);
+        
+        // Reset form và xóa ảnh đã chụp
         e.target.reset();
+        for (let k in captures) delete captures[k];
+        
+        // (Tùy chọn) Ẩn ảnh đã hiện trên giao diện
+        document.querySelectorAll('.angle-img').forEach(img => img.classList.add('hidden'));
+        document.querySelectorAll('.angle-placeholder').forEach(ph => ph.classList.remove('hidden'));
 
-      }catch(err){
-        showToast('Submit failed.');
-      }
-      finally{
-        submitBtn.disabled=false;
-        submitBtn.textContent='Sign up';
+      } catch (err) {
+        console.error(err);
+        showToast(`Submit failed: ${err.message}`);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign up';
       }
     });
   </script>

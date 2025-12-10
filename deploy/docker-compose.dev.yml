@@ -4,19 +4,46 @@ services:
   # --- BACKEND ---
   backend:
     build:
-      context: ../backend        # Trỏ ra thư mục backend
+      context: ../backend
       dockerfile: Dockerfile
     container_name: faceid_backend
     ports:
       - "8000:8000"
     volumes:
-      - ../backend/app:/app/app       # Map code: Sửa ở máy thật -> Docker cập nhật luôn
-      - ../data:/app/data             # Map data: Để ảnh không bị mất
-      - ../backend/weights:/app/weights # Map model AI
+      - ../backend/app:/app/app
+      - ../data:/app/data
+      - ../backend/weights:/app/weights
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}  
     env_file:
-      - ../.env                       # Đọc file cấu hình chung
+      - ../.env
     depends_on:
       - db
+    networks:
+      - faceid_network
+
+  # --- FRONTEND (NODEJS) ---
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: faceid_node_server
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - PORT=3000
+
+    env_file:
+      - ../.env 
+
+    depends_on:
+      - db
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    
     networks:
       - faceid_network
 

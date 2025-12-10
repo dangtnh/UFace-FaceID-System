@@ -26,3 +26,4 @@ mkdir -p data/vectors
 
 docker compose -f deploy/docker-compose.dev.yml up -d --build
 
+docker compose -f deploy/docker-compose.dev.yml exec frontend npx prisma db push

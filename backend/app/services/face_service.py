@@ -11,6 +11,7 @@ class FaceService:
         vectors = []
         for file in files:
             content = await file.read()
+            await file.seek(0)
             vec = ai_engine.predict(content)
             if vec is not None:
                 vectors.append(vec)

@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UFace • Classes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Base theme -->
+  <link rel="stylesheet" href="/assets/css/uface-theme.css" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-image: linear-gradient(to bottom right, #c7ddff, #f4f7ff, #ffffff);
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px 20px;
+    }
+
+    .sidebar {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px 16px;
+    }
+
+    .main {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* SIDEBAR */
+    .sb-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sb-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sb-logo-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 16px;
+      object-fit: contain;
+      background: radial-gradient(circle at 0 0, #38bdf8, #2563eb);
+      padding: 4px;
+    }
+
+    .sb-usth-logo {
+      height: 26px;
+      object-fit: contain;
+    }
+
+    .sb-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .sb-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .sb-nav {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 9px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #6b7280;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s, transform 0.08s, box-shadow 0.12s;
+    }
+
+    .sb-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 7px;
+      background: #eff2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #4f46e5;
+    }
+
+    .sb-label {
+      flex: 1;
+    }
+
+    .sb-item:hover {
+      background: #f3f4ff;
+      color: #111827;
+      transform: translateY(-1px);
+    }
+
+    .sb-item.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+    }
+
+    .sb-item.active .sb-icon {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .sb-footer {
+      padding-top: 12px;
+      border-top: 1px dashed #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sb-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: #e0ebff;
+      color: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .sb-user-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .sb-user-role {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .topbar-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .topbar-sub {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .topbar-right {
+      font-size: 11px;
+      color: #9ca3af;
+      padding-top: 4px;
+    }
+
+    /* FILTER BAR */
+    .filter-bar {
+      border-radius: 18px;
+      background: radial-gradient(circle at 0 0, #e0ecff, #ffffff);
+      border: 1px solid #e5e7eb;
+      padding: 10px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-left,
+    .filter-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #4b5563;
+      margin-right: 4px;
+    }
+
+    .filter-search {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .filter-search input {
+      padding-left: 28px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 9px;
+      font-size: 13px;
+      color: #9ca3af;
+      pointer-events: none;
+    }
+
+    .filter-input,
+    .filter-select {
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      padding: 6px 10px;
+      font-size: 12px;
+      outline: none;
+      background: #ffffff;
+    }
+
+    .filter-input:focus,
+    .filter-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
+    }
+
+    .pill-group {
+      display: inline-flex;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #d1d5db;
+      overflow: hidden;
+    }
+
+    .pill {
+      padding: 5px 12px;
+      font-size: 11px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #6b7280;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .pill.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #ffffff;
+    }
+
+    .pill + .pill {
+      border-left: 1px solid #e5e7eb;
+    }
+
+    .btn-outline-small {
+      border-radius: 999px;
+      border: 1px solid #cbd5f5;
+      padding: 4px 9px;
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #4b5563;
+      cursor: pointer;
+    }
+
+    .btn-outline-small:hover {
+      border-color: #2563eb;
+      color: #1d4ed8;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .section-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .year-badge {
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 10px;
+      background: rgba(37, 99, 235, 0.08);
+      color: #1d4ed8;
+    }
+
+    /* CLASS GRID + CARD */
+    .classes-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 12px;
+    }
+
+    .class-card {
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #eef2ff, #ffffff);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.05);
+      padding: 12px 14px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s;
+      cursor: pointer;
+    }
+
+    .class-card:hover {
+      transform: translateY(-2px);
+      border-color: #2563eb;
+      box-shadow: 0 18px 40px rgba(37, 99, 235, 0.22);
+    }
+
+    .class-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .class-code {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .class-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .class-status {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10px;
+      background: rgba(34, 197, 94, 0.14);
+      color: #15803d;
+      white-space: nowrap;
+    }
+
+    .class-status.upcoming {
+      background: rgba(59, 130, 246, 0.15);
+      color: #1d4ed8;
+    }
+
+    .class-status.finished {
+      background: rgba(148, 163, 184, 0.18);
+      color: #4b5563;
+    }
+
+    .class-body {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    /* camera frame */
+    .class-camera {
+      border-radius: 16px;
+      background: radial-gradient(circle at 0 0, #020617, #111827);
+      position: relative;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: #e5e7eb;
+    }
+
+    .class-camera-label {
+      font-size: 10px;
+      opacity: 0.85;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cam-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+    }
+
+    .class-camera-screen {
+      flex: 1;
+      border-radius: 12px;
+      background-image:
+        radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.18), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(30, 64, 175, 0.6), rgba(15, 23, 42, 1));
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: rgba(229, 231, 235, 0.8);
+    }
+
+    /* info block */
+    .class-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .class-meta {
+      font-size: 11px;
+      color: #6b7280;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 10px;
+    }
+
+    .class-meta span::before {
+      content: "• ";
+    }
+
+    .class-att {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .att-main {
+      font-weight: 600;
+      color: #1d4ed8;
+    }
+
+    .att-sub {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .att-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .att-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+    }
+
+    .class-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .class-tag {
+      border-radius: 999px;
+      padding: 2px 7px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px dashed #cbd5f5;
+      color: #4b5563;
+      font-size: 10px;
+    }
+
+    .btn-ghost {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 4px 10px;
+      font-size: 11px;
+      background: transparent;
+      color: #2563eb;
+      cursor: pointer;
+    }
+
+    .btn-ghost:hover {
+      border-color: #bfdbfe;
+      background: rgba(239, 246, 255, 0.9);
+    }
+
+    @media (max-width: 960px) {
+      .shell {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 14px;
+      }
+
+      .sidebar {
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .sb-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .sb-footer {
+        display: none;
+      }
+
+      .class-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .filter-bar {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .main {
+        padding: 14px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <div class="sb-brand">
+        <img src="/images/logo.png" alt="UFace logo" class="sb-logo-img" />
+        <div>
+          <div class="sb-title">UFace</div>
+          <div class="sb-sub">Smart Attendance</div>
+        </div>
+      </div>
+      <!-- logo USTH -->
+      <img src="/images/logo.png" alt="USTH logo" class="sb-usth-logo" />
+    </div>
+
+    <nav class="sb-nav">
+      <a href="/admin" class="sb-item">
+        <div class="sb-icon">📊</div>
+        <span class="sb-label">Dashboard</span>
+      </a>
+      <a href="/admin/classes" class="sb-item active">
+        <div class="sb-icon">🏫</div>
+        <span class="sb-label">Classes</span>
+      </a>
+      <a href="#" class="sb-item">
+        <div class="sb-icon">👨‍🎓</div>
+        <span class="sb-label">Students</span>
+      </a>
+      <a href="/" class="sb-item">
+        <div class="sb-icon">📷</div>
+        <span class="sb-label">Live camera</span>
+      </a>
+      <a href="#" class="sb-item">
+        <div class="sb-icon">⚙️</div>
+        <span class="sb-label">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-avatar">A</div>
+      <div>
+        <div class="sb-user-name">Admin</div>
+        <div class="sb-user-role">System Admin</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Classes</div>
+        <div class="topbar-sub">Manage all classes, majors and live attendance streams.</div>
+      </div>
+      <div class="topbar-right">
+        Semester 2024–2025 • B1 – B3
+      </div>
+    </header>
+
+    <!-- Filter bar -->
+    <section class="filter-bar">
+      <div class="filter-left">
+        <span class="filter-label">Search:</span>
+        <div class="filter-search">
+          <span class="search-icon">🔍</span>
+          <input id="filter-search-input" class="filter-input" type="text" placeholder="Class name / code / lecturer…" />
+        </div>
+      </div>
+      <div class="filter-right">
+        <span class="filter-label">Year:</span>
+        <div class="pill-group" aria-label="Year filter (demo only)">
+          <button class="pill active" type="button" data-year="">All</button>
+          <button class="pill" type="button" data-year="B1">B1</button>
+          <button class="pill" type="button" data-year="B2">B2</button>
+          <button class="pill" type="button" data-year="B3">B3</button>
+        </div>
+
+        <select id="filter-major" class="filter-select">
+          <option value="">All majors</option>
+          <option value="ICT">ICT</option>
+          <option value="BI">BI</option>
+          <option value="AI">AI</option>
+          <option value="PHYS">PHYS</option>
+          <option value="MIXED">MIXED</option>
+        </select>
+
+        <select id="filter-status" class="filter-select">
+          <option value="">Status: All</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="finished">Finished</option>
+        </select>
+
+        <button id="filter-reset" class="btn-outline-small" type="button">Reset</button>
+      </div>
+    </section>
+
+    <!-- B1 -->
+    <section class="year-section" data-year-section="B1">
+      <div class="section-header">
+        <div>
+          <div class="section-title">B1 classes</div>
+          <div class="section-sub">Introductory courses for first-year students.</div>
+        </div>
+        <span class="year-badge">Year B1</span>
+      </div>
+
+      <div class="classes-grid">
+        <!-- B1 class 1 -->
+        <article class="class-card"
+                 data-year="B1"
+                 data-major="BI"
+                 data-status="upcoming"
+                 data-search="23BI-INF201 data structures algorithms tran hoa">
+          <div class="class-header">
+            <div>
+              <div class="class-code">23BI-INF201 • B1</div>
+              <div class="class-name">Data Structures &amp; Algorithms</div>
+            </div>
+            <span class="class-status upcoming">Upcoming</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot" style="background:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,0.35);"></span>
+              </div>
+              <div class="class-camera-screen">
+                Starts in 20 minutes
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: BI</span>
+                <span>Room: B11-3</span>
+                <span>Lecturer: Ms. Tran Hoa</span>
+                <span>Time: 10:00 – 11:30</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">28 / 36 registered</div>
+                <div class="att-sub">Last session: 89% present</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 89%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">BI • B1 • Required</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+
+        <!-- B1 class 2 -->
+        <article class="class-card"
+                 data-year="B1"
+                 data-major="ICT"
+                 data-status="ongoing"
+                 data-search="ict1.005 introduction to programming le tuan">
+          <div class="class-header">
+            <div>
+              <div class="class-code">ICT1.005 • B1</div>
+              <div class="class-name">Introduction to Programming</div>
+            </div>
+            <span class="class-status">Ongoing</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot"></span>
+              </div>
+              <div class="class-camera-screen">
+                Stream preview
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: ICT</span>
+                <span>Room: A12-4</span>
+                <span>Lecturer: Mr. Le Tuan</span>
+                <span>Time: 08:00 – 09:30</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">45 / 52 students present</div>
+                <div class="att-sub">Present 86% • 3 late • 4 absent</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 86%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">ICT • B1 • Core</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+
+        <!-- B1 class 3 -->
+        <article class="class-card"
+                 data-year="B1"
+                 data-major="MIXED"
+                 data-status="finished"
+                 data-search="math1.101 calculus i vo linh">
+          <div class="class-header">
+            <div>
+              <div class="class-code">MATH1.101 • B1</div>
+              <div class="class-name">Calculus I</div>
+            </div>
+            <span class="class-status finished">Finished</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot" style="background:#9ca3af;box-shadow:none;"></span>
+              </div>
+              <div class="class-camera-screen">
+                Session finished
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: All majors</span>
+                <span>Room: A21-1</span>
+                <span>Lecturer: Dr. Vo Linh</span>
+                <span>Time: 13:30 – 15:00</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">70 / 82 attended</div>
+                <div class="att-sub">Attendance 85% • 5 late • 7 absent</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 85%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">Foundation • B1</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- B2 -->
+    <section class="year-section" data-year-section="B2">
+      <div class="section-header">
+        <div>
+          <div class="section-title">B2 classes</div>
+          <div class="section-sub">Core modules for second-year students.</div>
+        </div>
+        <span class="year-badge">Year B2</span>
+      </div>
+
+      <div class="classes-grid">
+        <!-- B2 class 1 -->
+        <article class="class-card"
+                 data-year="B2"
+                 data-major="ICT"
+                 data-status="ongoing"
+                 data-search="ict3.017 live camera face attendance nguyen an">
+          <div class="class-header">
+            <div>
+              <div class="class-code">ICT3.017 • B2</div>
+              <div class="class-name">Live Camera – Face Attendance</div>
+            </div>
+            <span class="class-status">Ongoing</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot"></span>
+              </div>
+              <div class="class-camera-screen">
+                Stream preview
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: ICT</span>
+                <span>Room: A21-8</span>
+                <span>Lecturer: Dr. Nguyen An</span>
+                <span>Time: 09:15 – 11:00</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">34 / 42 students present</div>
+                <div class="att-sub">Present 81% • Late 4 • Absent 4</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 81%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">ICT • B2 • Core module</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+
+        <!-- B2 class 2 -->
+        <article class="class-card"
+                 data-year="B2"
+                 data-major="PHYS"
+                 data-status="finished"
+                 data-search="phy2.204 physics lab optics le minh">
+          <div class="class-header">
+            <div>
+              <div class="class-code">PHY2.204 • B2</div>
+              <div class="class-name">Physics Lab – Optics</div>
+            </div>
+            <span class="class-status finished">Finished</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot" style="background:#9ca3af;box-shadow:none;"></span>
+              </div>
+              <div class="class-camera-screen">
+                Session finished
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: PHYS</span>
+                <span>Room: Lab D3</span>
+                <span>Lecturer: Mr. Le Minh</span>
+                <span>Time: 09:00 – 11:30</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">18 / 24 attended</div>
+                <div class="att-sub">Attendance 75% • 2 late • 4 absent</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 75%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">PHYS • B2 • Lab</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+
+        <!-- B2 class 3 -->
+        <article class="class-card"
+                 data-year="B2"
+                 data-major="MIXED"
+                 data-status="upcoming"
+                 data-search="stat2.110 probability statistics do thanh">
+          <div class="class-header">
+            <div>
+              <div class="class-code">STAT2.110 • B2</div>
+              <div class="class-name">Probability &amp; Statistics</div>
+            </div>
+            <span class="class-status upcoming">Upcoming</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot" style="background:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,0.35);"></span>
+              </div>
+              <div class="class-camera-screen">
+                Starts at 13:30
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: ICT / BI / AI</span>
+                <span>Room: B21-2</span>
+                <span>Lecturer: Dr. Do Thanh</span>
+                <span>Time: 13:30 – 15:00</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">60 / 64 registered</div>
+                <div class="att-sub">Last session: 92% present</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 92%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">Multi-major • B2</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- B3 -->
+    <section class="year-section" data-year-section="B3">
+      <div class="section-header">
+        <div>
+          <div class="section-title">B3 classes</div>
+          <div class="section-sub">Advanced courses &amp; specialization.</div>
+        </div>
+        <span class="year-badge">Year B3</span>
+      </div>
+
+      <div class="classes-grid">
+        <!-- B3 class 1 -->
+        <article class="class-card"
+                 data-year="B3"
+                 data-major="AI"
+                 data-status="ongoing"
+                 data-search="ai4.102 introduction to machine learning pham quang">
+          <div class="class-header">
+            <div>
+              <div class="class-code">AI4.102 • B3</div>
+              <div class="class-name">Introduction to Machine Learning</div>
+            </div>
+            <span class="class-status">Ongoing</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot"></span>
+              </div>
+              <div class="class-camera-screen">
+                Stream preview
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: AI</span>
+                <span>Room: C12-2</span>
+                <span>Lecturer: Dr. Pham Quang</span>
+                <span>Time: 08:30 – 10:00</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">31 / 40 students present</div>
+                <div class="att-sub">Present 77% • 3 late • 6 absent</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 77%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">AI • B3 • Elective</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+
+        <!-- B3 class 2 -->
+        <article class="class-card"
+                 data-year="B3"
+                 data-major="ICT"
+                 data-status="upcoming"
+                 data-search="ict4.210 distributed systems nguyen phuong">
+          <div class="class-header">
+            <div>
+              <div class="class-code">ICT4.210 • B3</div>
+              <div class="class-name">Distributed Systems</div>
+            </div>
+            <span class="class-status upcoming">Upcoming</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot" style="background:#f97316;box-shadow:0 0 0 4px rgba(249,115,22,0.35);"></span>
+              </div>
+              <div class="class-camera-screen">
+                Starts in 45 minutes
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: ICT</span>
+                <span>Room: A23-5</span>
+                <span>Lecturer: Ms. Nguyen Phuong</span>
+                <span>Time: 14:00 – 16:00</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">22 / 28 registered</div>
+                <div class="att-sub">Last session: 93% present</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 93%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">ICT • B3 • Advanced</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+
+        <!-- B3 class 3 -->
+        <article class="class-card"
+                 data-year="B3"
+                 data-major="BI"
+                 data-status="finished"
+                 data-search="bi4.305 bioinformatics project tran quynh">
+          <div class="class-header">
+            <div>
+              <div class="class-code">BI4.305 • B3</div>
+              <div class="class-name">Bioinformatics Project</div>
+            </div>
+            <span class="class-status finished">Finished</span>
+          </div>
+
+          <div class="class-body">
+            <div class="class-camera">
+              <div class="class-camera-label">
+                <span>Live camera</span>
+                <span class="cam-dot" style="background:#9ca3af;box-shadow:none;"></span>
+              </div>
+              <div class="class-camera-screen">
+                Project review finished
+              </div>
+            </div>
+
+            <div class="class-info">
+              <div class="class-meta">
+                <span>Major: BI</span>
+                <span>Room: Lab B2</span>
+                <span>Lecturer: Dr. Tran Quynh</span>
+                <span>Time: 16:00 – 18:00</span>
+              </div>
+
+              <div class="class-att">
+                <div class="att-main">12 / 12 attended</div>
+                <div class="att-sub">Attendance 100% • Final presentation</div>
+                <div class="att-bar">
+                  <div class="att-bar-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="class-footer">
+            <span class="class-tag">BI • B3 • Capstone</span>
+            <button class="btn-ghost" type="button">Open details</button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  (function () {
+    const searchInput = document.getElementById("filter-search-input");
+    const majorSelect = document.getElementById("filter-major");
+    const statusSelect = document.getElementById("filter-status");
+    const resetBtn = document.getElementById("filter-reset");
+    const yearPills = Array.from(document.querySelectorAll(".pill-group .pill"));
+    const cards = Array.from(document.querySelectorAll(".class-card"));
+    const yearSections = Array.from(document.querySelectorAll(".year-section"));
+
+    let currentYearFilter = ""; // "" = all
+
+    function applyFilters() {
+      const searchTerm = (searchInput.value || "").trim().toLowerCase();
+      const majorFilter = (majorSelect.value || "").toUpperCase();
+      const statusFilter = (statusSelect.value || "").toLowerCase();
+
+      cards.forEach(card => {
+        const cardYear = (card.dataset.year || "").toUpperCase();
+        const cardMajor = (card.dataset.major || "").toUpperCase();
+        const cardStatus = (card.dataset.status || "").toLowerCase();
+        const searchContent = (card.dataset.search || card.textContent || "").toLowerCase();
+
+        const matchYear = !currentYearFilter || cardYear === currentYearFilter.toUpperCase();
+        const matchMajor = !majorFilter || cardMajor === majorFilter;
+        const matchStatus = !statusFilter || cardStatus === statusFilter;
+        const matchSearch = !searchTerm || searchContent.includes(searchTerm);
+
+        const visible = matchYear && matchMajor && matchStatus && matchSearch;
+        card.style.display = visible ? "" : "none";
+      });
+
+      // Ẩn/hiện section theo card bên trong
+      yearSections.forEach(section => {
+        const sectionCards = Array.from(section.querySelectorAll(".class-card"));
+        const anyVisible = sectionCards.some(c => c.style.display !== "none");
+        section.style.display = anyVisible ? "" : "none";
+      });
+    }
+
+    // Year pills
+    yearPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        yearPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentYearFilter = pill.dataset.year || "";
+        applyFilters();
+      });
+    });
+
+    // Other filters
+    searchInput.addEventListener("input", applyFilters);
+    majorSelect.addEventListener("change", applyFilters);
+    statusSelect.addEventListener("change", applyFilters);
+
+    // Reset
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      majorSelect.value = "";
+      statusSelect.value = "";
+      currentYearFilter = "";
+      yearPills.forEach(p => p.classList.remove("active"));
+      // set "All" pill active
+      const allPill = yearPills.find(p => (p.dataset.year || "") === "");
+      if (allPill) allPill.classList.add("active");
+      applyFilters();
+    });
+
+    // Khởi tạo: All years
+    applyFilters();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UFace Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Base theme -->
+  <link rel="stylesheet" href="/assets/css/uface-theme.css" />
+
+  <!-- Font đẹp hơn -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== LAYOUT ===== */
+    body {
+      margin: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-image: linear-gradient(to bottom right, #c7ddff, #f4f7ff, #ffffff);
+    }
+
+    .dash-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px 20px;
+    }
+
+    .dash-sidebar {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px 16px;
+    }
+
+    .dash-main {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sb-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sb-logo-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 16px;
+      object-fit: contain;
+      background: radial-gradient(circle at 0 0, #38bdf8, #2563eb);
+      padding: 4px;
+    }
+
+    .sb-logo-text-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .sb-logo-text-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .sb-nav {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .sb-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 9px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 13px;
+      color: #6b7280;
+      transition: background 0.15s, color 0.15s, transform 0.08s, box-shadow 0.12s;
+    }
+
+    .sb-nav-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 7px;
+      background: #eff2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #4f46e5;
+    }
+
+    .sb-nav-label {
+      flex: 1;
+    }
+
+    .sb-nav-item:hover {
+      background: #f3f4ff;
+      color: #111827;
+      transform: translateY(-1px);
+    }
+
+    .sb-nav-item.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+    }
+
+    .sb-nav-item.active .sb-nav-icon {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .sb-footer {
+      padding-top: 12px;
+      border-top: 1px dashed #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sb-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: #e0ebff;
+      color: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .sb-user-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .sb-user-role {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* ===== TOP BAR ===== */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .topbar-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .topbar-sub {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .topbar-right {
+      font-size: 11px;
+      color: #9ca3af;
+      padding-top: 4px;
+    }
+
+    /* ===== HERO BANNER ===== */
+    .hero {
+      border-radius: 22px;
+      background: radial-gradient(circle at 0 0, #38bdf8 0, #2563eb 32%, #3b82f6 48%, #fbbf24 100%);
+      color: #ffffff;
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 20px 40px rgba(37, 99, 235, 0.35);
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-sub {
+      font-size: 12px;
+      opacity: 0.95;
+    }
+
+    .hero-meta {
+      margin-top: 6px;
+      font-size: 11px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .hero-meta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .hero-badge {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      font-weight: 500;
+    }
+
+    .hero-chip {
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 10px;
+    }
+
+    /* ===== SECTIONS & GRID ===== */
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .stat-card {
+      border-radius: 18px;
+      padding: 12px 14px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .stat-label {
+      font-weight: 500;
+    }
+
+    .stat-tag {
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: #6b7280;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .stat-footer {
+      font-size: 11px;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      margin-right: 4px;
+      display: inline-block;
+    }
+
+    .bg-orange { background: rgba(248, 113, 113, 0.9); }
+    .bg-green { background: rgba(16, 185, 129, 0.9); }
+    .bg-sky   { background: rgba(56, 189, 248, 0.9); }
+    .bg-indigo{ background: rgba(79, 70, 229, 0.9); }
+
+    .stat-orange { background: linear-gradient(135deg, #fff7ed, #fee2e2); }
+    .stat-mint   { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+    .stat-sky    { background: linear-gradient(135deg, #e0f2fe, #f0f9ff); }
+    .stat-blue   { background: linear-gradient(135deg, #e0e7ff, #eff6ff); }
+
+    /* ===== CHARTS / CARDS ===== */
+    .lower-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .card {
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      padding: 12px 14px 14px;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.04);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .badge-soft {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10px;
+      background: #eef2ff;
+      color: #4b5563;
+    }
+
+    /* Donut chart */
+    .donut-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .donut-chart {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          #16a34a 0 70%,
+          #f97316 70% 85%,
+          #ef4444 85% 100%
+        );
+      position: relative;
+    }
+
+    .donut-chart::before {
+      content: "";
+      position: absolute;
+      inset: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+
+    .donut-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .donut-total {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .donut-label {
+      font-size: 10px;
+      color: #6b7280;
+    }
+
+    .donut-legend {
+      font-size: 11px;
+      color: #6b7280;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+    }
+
+    /* At-risk students table */
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .mini-table thead {
+      background: #f3f4ff;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    .mini-table tbody tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .mini-table tbody tr:hover {
+      background: #eef2ff;
+    }
+
+    .mini-badge {
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 10px;
+    }
+
+    .mini-badge-banned {
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+    }
+
+    .mini-badge-warning {
+      background: rgba(234, 179, 8, 0.12);
+      color: #92400e;
+    }
+
+    /* ===== ACTIVE CLASSES NOW ===== */
+    .live-classes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 cột, 2 hàng = 4 card */
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .live-class-card {
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #eef2ff, #ffffff);
+      padding: 12px 12px 10px;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.04);
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s;
+    }
+
+    .live-class-card:hover {
+      transform: translateY(-2px);
+      border-color: #2563eb;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.18);
+    }
+
+    .live-class-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .live-class-code {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .live-class-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .live-class-pill {
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 10px;
+      background: rgba(34, 197, 94, 0.12);
+      color: #15803d;
+    }
+
+    .live-class-meta {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #6b7280;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+    }
+
+    .live-class-meta span::before {
+      content: "• ";
+    }
+
+    .live-class-bottom {
+      margin-top: 8px;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #4b5563;
+    }
+
+    .live-class-count {
+      font-weight: 600;
+      color: #1d4ed8;
+    }
+
+    .btn-outline-small {
+      border-radius: 999px;
+      border: 1px solid #cbd5f5;
+      padding: 4px 9px;
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #4b5563;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 16px 18px 18px;
+      width: min(420px, 90vw);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.4);
+      animation: modalIn 0.15s ease-out;
+      font-size: 13px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0;
+    }
+
+    .modal-tag {
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 10px;
+      background: #eef2ff;
+      color: #4b5563;
+      margin-left: 6px;
+    }
+
+    .modal-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .modal-row span {
+      font-size: 12px;
+    }
+
+    .modal-row-label {
+      color: #6b7280;
+    }
+
+    .modal-footer {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #e5e7eb;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .dash-shell {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 14px;
+      }
+
+      .dash-sidebar {
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .sb-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .sb-footer {
+        display: none;
+      }
+
+      .lower-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .live-classes-grid {
+        grid-template-columns: minmax(0, 1fr); /* mobile: 1 cột */
+      }
+    }
+
+    @media (max-width: 720px) {
+      .dash-main {
+        padding: 14px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="dash-shell">
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="dash-sidebar">
+    <div class="sb-header">
+      <!-- logo UFace trong public/images/logo.png -->
+      <img src="/images/logo.png" alt="UFace logo" class="sb-logo-img" />
+      <div>
+        <div class="sb-logo-text-title">UFace</div>
+        <div class="sb-logo-text-sub">Smart Attendance</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+  <a href="/admin" class="sb-nav-item active">
+    <div class="sb-nav-icon">📊</div>
+    <span class="sb-nav-label">Dashboard</span>
+  </a>
+  <a href="/admin/classes" class="sb-nav-item">
+    <div class="sb-nav-icon">🏫</div>
+    <span class="sb-nav-label">Classes</span>
+  </a>
+      <a href="#" class="sb-nav-item">
+        <div class="sb-nav-icon">👨‍🎓</div>
+        <span class="sb-nav-label">Students</span>
+      </a>
+      <a href="#" class="sb-nav-item">
+        <div class="sb-nav-icon">📷</div>
+        <span class="sb-nav-label">Live camera</span>
+      </a>
+      <a href="#" class="sb-nav-item">
+        <div class="sb-nav-icon">📄</div>
+        <span class="sb-nav-label">Attendance logs</span>
+      </a>
+      <a href="#" class="sb-nav-item">
+        <div class="sb-nav-icon">⚙️</div>
+        <span class="sb-nav-label">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-avatar">A</div>
+      <div>
+        <div class="sb-user-name">Admin</div>
+        <div class="sb-user-role">System Admin</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="dash-main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Dashboard</div>
+        <div class="topbar-sub">Overview of students, classes and today’s attendance.</div>
+      </div>
+      <div class="topbar-right">
+        Semester 2024–2025
+      </div>
+    </header>
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="hero-title">USTH • UFace Attendance Center</div>
+        <div class="hero-sub">Real-time face recognition for smart classroom check-in.</div>
+        <div class="hero-meta">
+          <span><span class="hero-meta-dot"></span> Semester: 2024–2025</span>
+          <span><span class="hero-meta-dot"></span> Total registered students: 342</span>
+          <span><span class="hero-meta-dot"></span> Active classes: 18</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-badge">Current focus: ICT3.017 – A21-8 Auditorium</div>
+        <div class="hero-chip">Camera status: Ready • 60 FPS</div>
+      </div>
+    </section>
+
+    <!-- KPI CARDS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Key metrics</h2>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-orange">
+          <div class="stat-header">
+            <span class="stat-label">Total students</span>
+            <span class="stat-tag">All departments</span>
+          </div>
+          <div class="stat-value">342</div>
+          <div class="stat-footer">
+            <span><span class="stat-dot bg-orange"></span>+12 this week</span>
+            <span>Last update: 5 min ago</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-mint">
+          <div class="stat-header">
+            <span class="stat-label">Registered with face</span>
+            <span class="stat-tag">Have 5 angles</span>
+          </div>
+          <div class="stat-value">298</div>
+          <div class="stat-footer">
+            <span><span class="stat-dot bg-green"></span>87% of total</span>
+            <span>Face data complete</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-sky">
+          <div class="stat-header">
+            <span class="stat-label">Today sessions</span>
+            <span class="stat-tag">On schedule</span>
+          </div>
+          <div class="stat-value">7</div>
+          <div class="stat-footer">
+            <span><span class="stat-dot bg-sky"></span>3 in progress</span>
+            <span>4 finished</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-blue">
+          <div class="stat-header">
+            <span class="stat-label">Recognition success</span>
+            <span class="stat-tag">Today</span>
+          </div>
+          <div class="stat-value">97%</div>
+          <div class="stat-footer">
+            <span><span class="stat-dot bg-indigo"></span>Stable</span>
+            <span>2 manual check-ins</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS + EXAM RISK -->
+    <section class="section">
+      <div class="lower-grid">
+        <!-- At-risk students -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Exam eligibility risk</div>
+              <div class="card-sub">Students with absence ≥ 30% or close to 30% of total sessions.</div>
+            </div>
+            <span class="badge-soft">Highlight list</span>
+          </div>
+
+          <table class="mini-table">
+            <thead>
+            <tr>
+              <th>Student</th>
+              <th>Class</th>
+              <th>Attended / Total</th>
+              <th>Absence</th>
+              <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Le Hoang Long</td>
+              <td>ICT3.017</td>
+              <td>7 / 12</td>
+              <td>41%</td>
+              <td><span class="mini-badge mini-badge-banned">Banned</span></td>
+            </tr>
+            <tr>
+              <td>Pham Mai Anh</td>
+              <td>23BI-INF201</td>
+              <td>8 / 11</td>
+              <td>27%</td>
+              <td><span class="mini-badge mini-badge-warning">At risk</span></td>
+            </tr>
+            <tr>
+              <td>Nguyen Huu Dat</td>
+              <td>AI4.102</td>
+              <td>5 / 8</td>
+              <td>37%</td>
+              <td><span class="mini-badge mini-badge-banned">Banned</span></td>
+            </tr>
+            <tr>
+              <td>Tran Thu Huong</td>
+              <td>ICT3.017</td>
+              <td>9 / 13</td>
+              <td>31%</td>
+              <td><span class="mini-badge mini-badge-warning">Near limit</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Donut chart: today attendance -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">
+                Today’s attendance – ICT3.017 • Live Camera – Face Attendance
+              </div>
+              <div class="card-sub">Total registered: 42 students.</div>
+            </div>
+            <span class="badge-soft">09:15 • A21-8 Auditorium</span>
+          </div>
+
+          <div class="donut-wrapper">
+            <div class="donut-chart">
+              <div class="donut-center">
+                <div class="donut-total">42</div>
+                <div class="donut-label">students</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#16a34a;"></span>
+                Present: <strong>34</strong> (81%)
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#f97316;"></span>
+                Late: <strong>4</strong> (9%)
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#ef4444;"></span>
+                Absent: <strong>4</strong> (10%)
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#9ca3af;">
+                Recognition based on latest frame from camera stream.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVE CLASSES NOW (4 lớp, 2x2) -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Active classes now</h2>
+        <div class="section-actions">
+          <button class="btn-outline-small" type="button">
+            View all classes
+          </button>
+        </div>
+      </div>
+
+      <div class="live-classes-grid">
+        <!-- Class 1 -->
+        <article
+          class="live-class-card"
+          data-class-code="ICT3.017"
+          data-class-name="Live Camera – Face Attendance"
+          data-teacher="Dr. Nguyen An"
+          data-major="ICT"
+          data-room="A21-8 Auditorium"
+          data-time="09:15 – 11:00"
+          data-present="34"
+          data-total="42"
+        >
+          <div class="live-class-top">
+            <div>
+              <div class="live-class-code">ICT3.017</div>
+              <div class="live-class-name">Live Camera – Face Attendance</div>
+            </div>
+            <span class="live-class-pill">Ongoing</span>
+          </div>
+          <div class="live-class-meta">
+            <span>Major: ICT</span>
+            <span>Room: A21-8</span>
+            <span>Lecturer: Dr. Nguyen An</span>
+          </div>
+          <div class="live-class-bottom">
+            <span>
+              <span class="live-class-count">34</span> / 42 students present
+            </span>
+            <span>09:15 – 11:00</span>
+          </div>
+        </article>
+
+        <!-- Class 2 -->
+        <article
+          class="live-class-card"
+          data-class-code="23BI-INF201"
+          data-class-name="Data Structures & Algorithms"
+          data-teacher="Ms. Tran Hoa"
+          data-major="BI"
+          data-room="B11-3"
+          data-time="10:00 – 11:30"
+          data-present="28"
+          data-total="36"
+        >
+          <div class="live-class-top">
+            <div>
+              <div class="live-class-code">23BI-INF201</div>
+              <div class="live-class-name">Data Structures & Algorithms</div>
+            </div>
+            <span class="live-class-pill" style="background:rgba(59,130,246,0.16);color:#1d4ed8;">
+              Starting
+            </span>
+          </div>
+          <div class="live-class-meta">
+            <span>Major: BI</span>
+            <span>Room: B11-3</span>
+            <span>Lecturer: Ms. Tran Hoa</span>
+          </div>
+          <div class="live-class-bottom">
+            <span>
+              <span class="live-class-count">28</span> / 36 students present
+            </span>
+            <span>10:00 – 11:30</span>
+          </div>
+        </article>
+
+        <!-- Class 3 -->
+        <article
+          class="live-class-card"
+          data-class-code="AI4.102"
+          data-class-name="Introduction to Machine Learning"
+          data-teacher="Dr. Pham Quang"
+          data-major="AI"
+          data-room="C12-2"
+          data-time="08:30 – 10:00"
+          data-present="31"
+          data-total="40"
+        >
+          <div class="live-class-top">
+            <div>
+              <div class="live-class-code">AI4.102</div>
+              <div class="live-class-name">Introduction to Machine Learning</div>
+            </div>
+            <span class="live-class-pill" style="background:rgba(45,212,191,0.18);color:#0f766e;">
+              Ongoing
+            </span>
+          </div>
+          <div class="live-class-meta">
+            <span>Major: AI</span>
+            <span>Room: C12-2</span>
+            <span>Lecturer: Dr. Pham Quang</span>
+          </div>
+          <div class="live-class-bottom">
+            <span>
+              <span class="live-class-count">31</span> / 40 students present
+            </span>
+            <span>08:30 – 10:00</span>
+          </div>
+        </article>
+
+        <!-- Class 4 -->
+        <article
+          class="live-class-card"
+          data-class-code="PHY2.204"
+          data-class-name="Physics Lab – Optics"
+          data-teacher="Mr. Le Minh"
+          data-major="PHYS"
+          data-room="Lab D3"
+          data-time="09:00 – 11:30"
+          data-present="18"
+          data-total="24"
+        >
+          <div class="live-class-top">
+            <div>
+              <div class="live-class-code">PHY2.204</div>
+              <div class="live-class-name">Physics Lab – Optics</div>
+            </div>
+            <span class="live-class-pill" style="background:rgba(250,204,21,0.20);color:#92400e;">
+              Lab session
+            </span>
+          </div>
+          <div class="live-class-meta">
+            <span>Major: PHYS</span>
+            <span>Room: Lab D3</span>
+            <span>Lecturer: Mr. Le Minh</span>
+          </div>
+          <div class="live-class-bottom">
+            <span>
+              <span class="live-class-count">18</span> / 24 students present
+            </span>
+            <span>09:00 – 11:30</span>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ========== CLASS MODAL ========== -->
+<div class="modal-overlay" id="classModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">
+          <span id="modalClassCode">ICT3.017</span> – <span id="modalClassName">Live Camera – Face Attendance</span>
+        </div>
+        <div class="card-sub" style="margin-top:4px;">
+          Lecturer: <span id="modalTeacher">Dr. Nguyen An</span>
+          <span class="modal-tag" id="modalMajorTag">Major: ICT</span>
+        </div>
+      </div>
+      <button class="modal-close" type="button" id="modalCloseBtn">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-row">
+        <span class="modal-row-label">Room:</span>
+        <span id="modalRoom">A21-8 Auditorium</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-row-label">Time:</span>
+        <span id="modalTime">09:15 – 11:00</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-row-label">Attendance:</span>
+        <span><span id="modalPresent">34</span> / <span id="modalTotal">42</span> students</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-row-label">Attendance rate:</span>
+        <span id="modalRate">81%</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      Data is simulated for UI. Later this popup will be bound to real-time classroom & attendance API.
+    </div>
+  </div>
+</div>
+
+<script>
+  // modal logic for live class cards
+  const modalOverlay = document.getElementById("classModal");
+  const closeBtn = document.getElementById("modalCloseBtn");
+
+  function openClassModal(card) {
+    const d = card.dataset;
+    document.getElementById("modalClassCode").textContent = d.classCode || "";
+    document.getElementById("modalClassName").textContent = d.className || "";
+    document.getElementById("modalTeacher").textContent = d.teacher || "";
+    document.getElementById("modalMajorTag").textContent = "Major: " + (d.major || "");
+    document.getElementById("modalRoom").textContent = d.room || "";
+    document.getElementById("modalTime").textContent = d.time || "";
+    document.getElementById("modalPresent").textContent = d.present || "0";
+    document.getElementById("modalTotal").textContent = d.total || "0";
+
+    const present = Number(d.present || 0);
+    const total = Number(d.total || 0);
+    const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+    document.getElementById("modalRate").textContent = rate + "%";
+
+    modalOverlay.classList.add("open");
+  }
+
+  document.querySelectorAll(".live-class-card").forEach((card) => {
+    card.addEventListener("click", () => openClassModal(card));
+  });
+
+  function closeModal() {
+    modalOverlay.classList.remove("open");
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+  modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+</script>
+</body>
+</html>

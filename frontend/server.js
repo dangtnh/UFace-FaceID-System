@@ -172,6 +172,14 @@ app.get('/attendance', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'pages', 'live-attendance.html'));
 });
 
+// ✅ /admin → admin dashboard
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'pages', 'admin-dashboard.html'));
+});
+app.get('/admin/classes', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'pages', 'admin-classes.html'));
+});
+
 // ===== Error handler (multer, etc.) =====
 app.use((err, req, res, next) => {
   if (err) {
@@ -184,8 +192,10 @@ app.use((err, req, res, next) => {
 // ===== Start server =====
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
-  console.log(`➡  /           -> live-attendance.html`);
-  console.log(`➡  /register   -> register.html`);
+  console.log(`➡  /            -> live-attendance.html`);
+  console.log(`➡  /register    -> register.html`);
+  console.log(`➡  /attendance  -> live-attendance.html`);
+  console.log(`➡  /admin       -> admin-dashboard.html`);
 });
 
 // Graceful shutdown for Prisma

@@ -9,7 +9,6 @@ class FaceNetPipeline:
     _instance = None
 
     def __new__(cls):
-        # Singleton: Chỉ load model 1 lần duy nhất
         if cls._instance is None:
             cls._instance = super(FaceNetPipeline, cls).__new__(cls)
             cls._instance.initialize()
@@ -22,39 +21,45 @@ class FaceNetPipeline:
         self.resnet = build_recognizer(self.device)
         print(f"✅ AI Engine: Sẵn sàng ({self.device})")
 
-    def predict(self, image_bytes: bytes) -> np.ndarray:
+    def predict(self, image_bytes: bytes):
         try:
             img = read_image_file(image_bytes)
 
-            # Detect (lấy cả xác suất prob)
-            face, prob = self.mtcnn(img, return_prob=True)
+            # 1. Detect lấy tọa độ
+            boxes, probs = self.mtcnn.detect(img)
 
-            if face is None or prob is None:
-                return None
+            if boxes is None or probs is None:
+                return None, None, None
 
-            # Kiểm tra ngưỡng tin cậy (Logic từ project cũ)
-            prob_score = (
-                float(np.array(prob).max())
-                if isinstance(prob, (list, np.ndarray))
-                else float(prob)
-            )
-            if prob_score < settings.DETECTION_CONF_THRESH:
-                return None
+            # 2. Lấy box tốt nhất
+            best_box = boxes[0]
+            best_prob = probs[0]
 
-            # Embed
-            if face.ndim == 3:
-                face = face.unsqueeze(0)
-            face = face.to(self.device)
+            if best_prob < settings.DETECTION_CONF_THRESH:
+                return None, None, None
 
-            with torch.no_grad():
-                emb = self.resnet(face)
+            # 3. Extract (Cắt ảnh)
+            face_tensor = self.mtcnn.extract(img, np.array([best_box]), save_path=None)
 
-            # Chuẩn hóa L2
-            return l2_normalize(emb[0].cpu().numpy())
+            if face_tensor is not None:
+
+                if face_tensor.ndim == 3:
+                    face_tensor = face_tensor.unsqueeze(0)
+
+                face_tensor = face_tensor.to(self.device)
+
+                with torch.no_grad():
+                    emb = self.resnet(face_tensor)
+
+                vec_norm = l2_normalize(emb[0].cpu().numpy())
+
+                return vec_norm, best_box, best_prob
+
+            return None, None, None
 
         except Exception as e:
             print(f"❌ AI Error: {e}")
-            return None
+            return None, None, None
 
 
 ai_engine = FaceNetPipeline()

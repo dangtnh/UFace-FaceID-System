@@ -12,27 +12,32 @@ LATE_THRESHOLD_MINUTES = 15
 
 @router.post("/recognize")
 async def check_in(file: UploadFile = File(...)):
-    # 1. Gọi AI nhận diện xem là ai
+    # 1. Gọi AI nhận diện (Service giờ đã trả về box và score)
     result = await face_service.recognize_image(file)
 
     # 2. Xử lý kết quả trả về từ AI
     if result["status"] != "Match":
 
         # TRƯỜNG HỢP 1: UNKNOWN (Có mặt nhưng không khớp ai trong DB)
-        # -> Trả về JSON bình thường để Frontend hiện popup cảnh báo (thay vì lỗi đỏ 404)
         if result["status"] == "Unknown":
             return {
                 "status": "unknown",
                 "message": "Không tìm thấy dữ liệu sinh viên này trong hệ thống.",
+                # --- SỬA ĐỔI: Trả về Box và Score để Frontend vẽ ---
+                "box": result.get("box"),
+                "score": result.get("score"),
+                "similarity": result.get("similarity"),
+                "name": "Unknown",
                 "data": None,
             }
 
         # TRƯỜNG HỢP 2: LỖI ẢNH (Không thấy mặt, ảnh mờ...)
-        # -> Trả về lỗi 400 Bad Request
+        # -> Giữ nguyên logic trả về lỗi 400
         else:
             detail_msg = (
                 "No face detected"
-                if result["status"] == "NoFace"
+                if result.get("status") == "No face detected"
+                or result.get("status") == "NoFace"
                 else "Image processing error"
             )
             raise HTTPException(status_code=400, detail=detail_msg)
@@ -52,11 +57,13 @@ async def check_in(file: UploadFile = File(...)):
 
     # 4. Trả về kết quả thành công cho Frontend
     return {
-        "status": "success",  # Frontend check: if (status == 'success') ...
+        "status": "success",
         "mssv": result["mssv"],
         "name": result["name"],
         "similarity": result["similarity"],
         "check_in_time": check_in_time,
         "attendance_status": attendance_status,
         "message": f"Xin chào {result['name']}, bạn đi {'muộn' if is_late else 'đúng giờ'}!",
+        "box": result.get("box"),  # Tọa độ khung (x1, y1, x2, y2)
+        "score": result.get("score"),  # Điểm số hiển thị (VD: 0.85)
     }

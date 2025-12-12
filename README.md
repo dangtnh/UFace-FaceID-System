@@ -54,5 +54,7 @@ docker compose --env-file .env -f deploy/docker-compose.dev.yml down
 
 ==========
 - Delete all the data in container
-```docker compose --env-file .env -f deploy/docker-compose.dev.yml down -v```
+```
+docker compose --env-file .env -f deploy/docker-compose.dev.yml down -v
+```
 

@@ -1,9 +1,13 @@
+version: '3.8'
+
 services:
   # --- BACKEND (PYTHON) ---
   backend:
     build:
-      context: ../backend
-      dockerfile: Dockerfile
+      # QUAN TRỌNG: Context lùi ra thư mục gốc dự án (để nhìn thấy folder prisma)
+      context: ..
+      # Chỉ định rõ file Dockerfile nằm trong folder backend
+      dockerfile: backend/Dockerfile
     container_name: faceid_backend
     ports:
       - "8000:8000"
@@ -11,6 +15,7 @@ services:
       - ../backend/app:/app/app
       - ../data:/app/data
       - ../backend/weights:/app/weights
+      # Mount folder prisma vào để cập nhật schema khi dev
       - ../prisma:/app/prisma
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
@@ -22,14 +27,15 @@ services:
         condition: service_healthy
     networks:
       - faceid_network
-    # --- DÒNG QUAN TRỌNG: Ép sinh code Python rồi mới chạy server ---
+    # Lệnh chạy: Sinh code Prisma Client trước -> Chạy Server sau
     command: sh -c "prisma generate && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
   # --- FRONTEND (NODEJS) ---
   frontend:
     build:
-      context: ../frontend
-      dockerfile: Dockerfile
+      # Tương tự backend, frontend cũng cần context ở gốc nếu muốn copy prisma
+      context: ..
+      dockerfile: frontend/Dockerfile
     container_name: faceid_node_server
     restart: always
     ports:
@@ -48,7 +54,6 @@ services:
       - ../prisma:/app/prisma
     networks:
       - faceid_network
-    # --- DÒNG QUAN TRỌNG: Ép sinh code JS rồi mới chạy server ---
     command: sh -c "npx prisma generate --generator client_js && npm start"
 
   # --- DATABASE ---

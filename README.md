@@ -2,41 +2,57 @@
 
 Hệ thống điểm danh và nhận diện khuôn mặt tự động (Automated Face Recognition System) được xây dựng trên nền tảng **FastAPI**, **PostgreSQL** và **Docker**.
 
-## 🚀 Tính năng chính
+# 🚀 Tính năng chính
 - Nhận diện khuôn mặt thời gian thực (Real-time Face Recognition).
 - API quản lý danh sách nhân viên/người dùng.
 - Tự động mã hóa khuôn mặt thành Vector và lưu trữ vào Database.
 - Hệ thống đóng gói hoàn chỉnh với Docker & Docker Compose.
 
-## 🛠 Yêu cầu hệ thống (Prerequisites)
+# 🛠 Yêu cầu hệ thống (Prerequisites)
 Để chạy được dự án, máy tính cần cài đặt sẵn:
 - **Git**
 - **Docker** & **Docker Compose** (phiên bản mới nhất)
 
 ---
 
-## ⚙️ Hướng dẫn Cài đặt & Khởi chạy (Quick Start)
-git clone [https://github.com/dangtnh/UFace-FaceID-System.git](https://github.com/dangtnh/UFace-FaceID-System.git)
+# ⚙️ Hướng dẫn Cài đặt & Khởi chạy (Quick Start)
+## 1. Clone
+```
+git clone [https://github.com/dangtnh/UFace-FaceID-System.git]
 cd UFace-FaceID-System
+```
 
+## 2. Tạo môi trường
+```
 cp .env.example .env
 
 mkdir -p data/images
 mkdir -p data/vectors
+```
 
+## 3. Docker commands
+- Build from scratch
+```
 docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d --build
+```
 
-docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push
+- Create and draw tables in Database
+```docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push```
 
+```
 docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push --skip-generate
 
 docker compose --env-file .env -f deploy/docker-compose.dev.yml restart backend
-
+```
 ==========
+- Turn on all container and turn off all the container
+```
+docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d
 
 docker compose --env-file .env -f deploy/docker-compose.dev.yml down
-docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d
-==========
+```
 
-docker compose --env-file .env -f deploy/docker-compose.dev.yml down -v
+==========
+- Delete all the data in container
+```docker compose --env-file .env -f deploy/docker-compose.dev.yml down -v```
 

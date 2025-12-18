@@ -1,33 +1,37 @@
-# --- Cấu hình kho tải (Quan trọng nhất) ---
+# --- Cấu hình kho tải (Giữ nguyên để tải bản CPU nhẹ) ---
 --extra-index-url https://download.pytorch.org/whl/cpu
 
 # --- Framework Web & API ---
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
-python-multipart==0.0.6
-pydantic==2.5.3
-pydantic-settings==2.1.0
+# Nâng cấp lên bản mới ổn định để vá lỗi bảo mật
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+python-multipart==0.0.9
+pydantic==2.7.4
+pydantic-settings==2.3.4
 
-# --- Database ---
-sqlalchemy==2.0.25
-psycopg2-binary==2.9.9
-alembic==1.13.1
+# --- Database (Đã xóa SQLAlchemy/Alembic/Psycopg2) ---
+# Prisma Client Python (Nên khớp version với prisma cli ở package.json nếu có)
+prisma==0.13.1
 
 # --- AI & Xử lý ảnh ---
-# Giờ đây pip sẽ tự tìm thấy bản +cpu nhờ dòng link ở đầu file
-torch==2.1.2+cpu
-torchvision==0.16.2+cpu
+# PyTorch 2.2.x ổn định hơn và nhanh hơn 2.1 trên CPU
+torch==2.2.2+cpu
+torchvision==0.17.2+cpu
+# Facenet dùng để trích xuất đặc trưng khuôn mặt
 facenet-pytorch==2.5.3
-numpy==1.26.3
-pillow==10.2.0
-opencv-python-headless==4.9.0.80
+numpy==1.26.4
+pillow==10.3.0
+# Bản headless là chuẩn cho Docker (không cần GUI)
+opencv-python-headless==4.10.0.82
+
+# --- Vector Database & Data ---
+# Dùng faiss-cpu để tìm kiếm khuôn mặt nhanh
+faiss-cpu==1.8.0
+pandas==2.2.2
+
+packaging
 
 # --- Tiện ích ---
 python-dotenv==1.0.1
-requests==2.31.0
-
-faiss-cpu==1.7.4
-pandas==2.2.0
-
-prisma
-email-validator
+requests==2.32.3
+email-validator==2.1.1

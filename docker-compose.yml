@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # --- DATABASE ---
+  db:
+    image: postgres:15-alpine
+    container_name: faceid_db
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-faceid_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - faceid_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- BACKEND (PYTHON - FASTAPI + AI) ---
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: faceid_backend
+    # Tăng bộ nhớ share để load Model AI/CV
+    shm_size: '2gb' 
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app         # Hot reload code
+      - ./backend/weights:/app/weights # Mount weights
+      - ./prisma:/app/prisma           # Mount schema để dev
+      - ./data:/app/data               # Mount data ảnh
+    environment:
+      # Tự động tạo Connection String nội bộ Docker
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - PYTHONPATH=/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - faceid_network
+    # Chạy prisma generate mỗi khi khởi động để đảm bảo đồng bộ Schema mới nhất
+    command: sh -c "prisma generate && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  # --- FRONTEND (NODEJS - REACT/VITE) ---
+  frontend:
+    build:
+      context: ./frontend  
+      dockerfile: Dockerfile
+    container_name: faceid_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    env_file: .env
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      # Bỏ mount prisma nếu frontend không dùng trực tiếp
+    networks:
+      - faceid_network
+
+
+  # --- (Optional) PRISMA STUDIO ---
+  # Giao diện quản lý Database cực tiện lợi
+  prisma_studio:
+    image: node:18-alpine
+    container_name: prisma_studio
+    working_dir: /app
+    volumes:
+      - ./prisma:/app/prisma
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    networks:
+      - faceid_network
+    ports:
+      - "5555:5555"
+    command: sh -c "npm install -g prisma && prisma studio --port 5555 --browser none"
+
+volumes:
+  postgres_data:
+
+networks:
+  faceid_network:
+    driver: bridge

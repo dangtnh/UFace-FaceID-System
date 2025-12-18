@@ -1,23 +1,20 @@
-# Sử dụng Node.js phiên bản nhẹ
+# 1. Dùng Node Alpine cho nhẹ
 FROM node:18-alpine
 
-# Thiết lập thư mục làm việc trong container
 WORKDIR /app
 
-# Copy file định nghĩa thư viện trước (để tối ưu cache)
+# 2. Copy file config và cài thư viện
 COPY package*.json ./
 
-# Cài đặt các thư viện (Express, Prisma, Multer...)
+# Lưu ý: Nếu mạng chậm, có thể dùng 'npm ci' thay vì 'npm install' để cài nhanh hơn
 RUN npm install
 
-# Copy toàn bộ code còn lại vào container
+# 3. Copy source code
 COPY . .
 
-# Tạo Prisma Client (Bước này cực quan trọng vì bạn dùng Prisma)
-# RUN npx prisma generate
-
-# Mở cổng 3000 (Express của bạn chạy cổng này)
+# 4. Mở cổng 3000 (Mặc định của Vite)
 EXPOSE 3000
 
-# Chạy server
-CMD ["npm", "start"]
+# 5. Chạy server ở chế độ Dev
+# Lưu ý: Cần thêm '--host' để truy cập được từ bên ngoài Docker (từ máy thật của bạn)
+CMD ["npm", "run", "dev"]

@@ -1,30 +1,88 @@
-# --- 1. Python & Cache (Rác hệ thống sinh ra khi chạy code) ---
+# ========================
+# 1. HỆ ĐIỀU HÀNH (OS Files)
+# ========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ========================
+# 2. PYTHON (Backend)
+# ========================
 __pycache__/
 *.py[cod]
 *$py.class
-
-# --- 2. Môi trường ảo (Chứa hàng ngàn file thư viện, không được push) ---
+*.so
+.Python
+# Môi trường ảo
 venv/
 .venv/
 env/
+# Công cụ test/coverage
+.coverage
+htmlcov/
+.pytest_cache/
 
-# --- 3. Biến môi trường & Bảo mật (QUAN TRỌNG NHẤT) ---
-# Chỉ push file .env.example, KHÔNG push file .env chứa mật khẩu thật
+# ========================
+# 3. NODE.JS & FRONTEND (QUAN TRỌNG - Bị thiếu ở file cũ)
+# ========================
+# Thư viện Node (Cực nặng, tuyệt đối không push)
+node_modules/
+frontend/node_modules/
+
+# Logs lỗi của npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Thư mục build của Vite/React (Code đã biên dịch, không cần push)
+dist/
+build/
+frontend/dist/
+frontend/build/
+
+# ========================
+# 4. DOCKER & DATABASE
+# ========================
+# Dữ liệu DB nếu mount ra ngoài (Tránh push cả cái Database lên Git!)
+postgres_data/
+pgdata/
+.docker/
+
+# ========================
+# 5. MÔI TRƯỜNG & BẢO MẬT
+# ========================
 .env
-.env.local
+.env.*
+!.env.example
+# File key SSH hoặc chứng chỉ SSL nếu có
+*.pem
+*.key
 
-# --- 4. IDE Settings (Cấu hình riêng của máy bạn) ---
+# ========================
+# 6. DATA & AI MODELS
+# ========================
+# Các file weights nặng (Nên dùng Git LFS nếu muốn push, còn không thì ignore)
+*.pt
+*.pth
+*.h5
+*.onnx
+*.tflite
+
+# Vector database index
+*.index
+*.pkl
+
+# Dữ liệu ảnh test/train (Giữ lại folder nhưng không push ảnh)
+data/images/*
+!data/images/.gitkeep
+
+# Thư mục chứa weights
+backend/weights/*
+!backend/weights/.gitkeep
+
+# ========================
+# 7. IDE CONFIG (Tùy chọn)
+# ========================
 .vscode/
 .idea/
 *.swp
-
-# --- 5. Dữ liệu (Như đã bàn ở trên) ---
-# Ignore các file vector và model đã train
-data/vectors/*.index
-data/vectors/*.pkl
-data/weights/*.pt
-data/weights/*.pth
-data/weights/*.h5
-
-# Ignore ảnh nếu quá nặng (tuỳ chọn)
-data/images/

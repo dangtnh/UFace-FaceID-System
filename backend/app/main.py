@@ -2,20 +2,43 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.api_v1.router import api_router
+from prisma import Prisma
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
-# Cấu hình CORS (Cho phép Web Frontend gọi vào)
+prisma = Prisma()
+
+
+# --- BỔ SUNG LOGIC KẾT NỐI DB ---
+@app.on_event("startup")
+async def startup():
+    try:
+        await prisma.connect()
+        print("✅ Connected to Database via Prisma")
+    except Exception as e:
+        print(f"❌ Could not connect to Database: {e}")
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    if prisma.is_connected():
+        await prisma.disconnect()
+        print("🛑 Disconnected from Database")
+
+
+# --------------------------------
+
+# Cấu hình CORS
 app.add_middleware(
     CORSMiddleware,
+    # LƯU Ý: Khi deploy production, hãy thay ["*"] bằng domain cụ thể của frontend
+    # Ví dụ: allow_origins=["https://my-frontend.com", "http://localhost:3000"]
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 2. KẾT NỐI ROUTER VÀO APP
-# Dòng này cực quan trọng, nếu thiếu nó Swagger sẽ trống trơn
 app.include_router(api_router, prefix="/api/v1")
 
 

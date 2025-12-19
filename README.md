@@ -33,28 +33,26 @@ mkdir -p data/vectors
 ## 3. Docker commands
 - Build from scratch
 ```
-docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d --build
+docker compose up --build -d
 ```
 
 - Create and draw tables in Database
-```docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push```
+```
+docker compose run --rm prisma_studio npx prisma migrate dev --name init
+```
 
 ```
-docker compose --env-file .env -f deploy/docker-compose.dev.yml exec frontend npx prisma db push --skip-generate
+docker compose run --rm prisma_studio npx prisma migrate dev --name init --skip-generate
 
-docker compose --env-file .env -f deploy/docker-compose.dev.yml restart backend
-```
+docker compose restart backend```
 ==========
 - Turn on all container and turn off all the container
 ```
-docker compose --env-file .env -f deploy/docker-compose.dev.yml up -d
-
-docker compose --env-file .env -f deploy/docker-compose.dev.yml down
-```
+docker compose up -d
+docker compose down```
 
 ==========
 - Delete all the data in container
 ```
-docker compose --env-file .env -f deploy/docker-compose.dev.yml down -v
-```
+docker compose down -v```
 

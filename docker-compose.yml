@@ -67,6 +67,7 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+      - ./prisma:/app/prisma
       - /app/node_modules
       # Bỏ mount prisma nếu frontend không dùng trực tiếp
     networks:

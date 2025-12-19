@@ -39,20 +39,20 @@ docker compose up --build -d
 - Create and draw tables in Database
 ```
 docker compose run --rm prisma_studio npx prisma migrate dev --name init
-```
 
-```
 docker compose run --rm prisma_studio npx prisma migrate dev --name init --skip-generate
 
-docker compose restart backend```
-==========
+docker compose restart backend
+```
 - Turn on all container and turn off all the container
 ```
 docker compose up -d
-docker compose down```
 
-==========
+docker compose down
+```
+
 - Delete all the data in container
 ```
-docker compose down -v```
+docker compose down -v
+```
 

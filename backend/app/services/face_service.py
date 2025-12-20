@@ -2,7 +2,7 @@ from typing import List
 from fastapi import UploadFile
 import numpy as np
 from app.services.ai_engine.pipeline import ai_engine
-from app.services.store.vector_db import vector_db
+from app.repositories.vector_repo import vector_repo
 from app.core.config import settings
 
 
@@ -39,7 +39,7 @@ class FaceService:
 
         # Tạo nhãn lưu trữ format: "MSSV|Tên"
         label = f"{mssv}|{name}"
-        vector_db.add_vector(avg_vec, label)
+        vector_repo.add(avg_vec, label)
 
         return {"mssv": mssv, "name": name, "status": "Training Completed"}
 
@@ -79,7 +79,7 @@ class FaceService:
         }
 
         # 1. Tìm kiếm trong Vector DB (Lấy người giống nhất)
-        result = vector_db.search(vec)
+        result = vector_repo.search_similar(vec)
 
         # --- XỬ LÝ Logic hiển thị (Score & Identity) ---
 

@@ -1,69 +1,41 @@
-from datetime import datetime
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.face_service import face_service
+from app.services.attendance import attendance_service
 
 router = APIRouter()
-
-# Cấu hình giờ vào lớp (Demo: 8h00, cho phép muộn 15p)
-START_TIME_HOUR = 8
-START_TIME_MINUTE = 0
-LATE_THRESHOLD_MINUTES = 15
 
 
 @router.post("/recognize")
 async def check_in(file: UploadFile = File(...)):
-    # 1. Gọi AI nhận diện (Service giờ đã trả về box và score)
+    # 1. Gọi AI nhận diện
     result = await face_service.recognize_image(file)
 
-    # 2. Xử lý kết quả trả về từ AI
+    # 2. Xử lý các trường hợp lỗi/unknown
     if result["status"] != "Match":
-
-        # TRƯỜNG HỢP 1: UNKNOWN (Có mặt nhưng không khớp ai trong DB)
         if result["status"] == "Unknown":
             return {
                 "status": "unknown",
-                "message": "Không tìm thấy dữ liệu sinh viên này trong hệ thống.",
-                # --- SỬA ĐỔI: Trả về Box và Score để Frontend vẽ ---
+                "message": "Không tìm thấy sinh viên.",
                 "box": result.get("box"),
                 "score": result.get("score"),
                 "similarity": result.get("similarity"),
                 "name": "Unknown",
-                "data": None,
             }
+        # else:
+        #     raise HTTPException(status_code=400, detail="No face detected or Error")
 
-        # TRƯỜNG HỢP 2: LỖI ẢNH (Không thấy mặt, ảnh mờ...)
-        # -> Giữ nguyên logic trả về lỗi 400
-        else:
-            detail_msg = (
-                "No face detected"
-                if result.get("status") == "No face detected"
-                or result.get("status") == "NoFace"
-                else "Image processing error"
-            )
-            raise HTTPException(status_code=400, detail=detail_msg)
+    # 3. Gọi Service tính toán giờ giấc (Thay vì if/else tại đây)
+    check_in_time, status, is_late = attendance_service.check_attendance_status()
 
-    # 3. Logic kiểm tra thời gian (Time Check) - Chỉ chạy khi đã Match
-    now = datetime.now()
-    check_in_time = now.strftime("%H:%M:%S")
-
-    # Tính thời gian muộn
-    is_late = False
-    if now.hour > START_TIME_HOUR:
-        is_late = True
-    elif now.hour == START_TIME_HOUR and now.minute > LATE_THRESHOLD_MINUTES:
-        is_late = True
-
-    attendance_status = "LATE" if is_late else "ON TIME"
-
-    # 4. Trả về kết quả thành công cho Frontend
+    # 4. Trả kết quả
     return {
         "status": "success",
         "mssv": result["mssv"],
         "name": result["name"],
         "similarity": result["similarity"],
         "check_in_time": check_in_time,
-        "attendance_status": attendance_status,
+        "attendance_status": status,
         "message": f"Xin chào {result['name']}, bạn đi {'muộn' if is_late else 'đúng giờ'}!",
-        "box": result.get("box"),  # Tọa độ khung (x1, y1, x2, y2)
-        "score": result.get("score"),  # Điểm số hiển thị (VD: 0.85)
+        "box": result.get("box"),
+        "score": result.get("score"),
     }

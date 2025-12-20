@@ -1,16 +1,11 @@
 from typing import List
 from fastapi import UploadFile
-from prisma import Prisma
 from app.schemas.student import StudentCreate
-
-# Import instance face_service từ file bên trên
+from app.repositories.student_repo import student_repo
 from app.services.face_service import face_service
 
 
 class StudentService:
-    def __init__(self, db: Prisma):
-        self.db = db
-
     async def register_student(
         self,
         full_name: str,
@@ -18,15 +13,13 @@ class StudentService:
         school_email: str,
         images: List[UploadFile],
     ):
-        # BƯỚC 1: Kiểm tra trùng lặp trong SQL
-        existing = await self.db.student.find_first(
-            where={"OR": [{"studentId": student_id}, {"schoolEmail": school_email}]}
-        )
+        # 1. Gọi Repo kiểm tra trùng
+        existing = await student_repo.find_by_id_or_email(student_id, school_email)
         if existing:
             raise Exception("Sinh viên đã tồn tại (Trùng ID hoặc Email)")
 
-        # BƯỚC 2: Lưu vào PostgreSQL
-        new_student = await self.db.student.create(
+        # 2. Gọi Repo lưu DB
+        new_student = await student_repo.create(
             data={
                 "fullName": full_name,
                 "studentId": student_id,
@@ -35,11 +28,16 @@ class StudentService:
             }
         )
 
-        # BƯỚC 3: Gọi FaceService để xử lý AI
-        # Truyền đúng tham số mà hàm register_student của FaceService yêu cầu (mssv, name, files)
+        # 3. Gọi AI Train
         if images:
             await face_service.register_student(
                 mssv=new_student.studentId, name=new_student.fullName, files=images
             )
 
         return new_student
+
+    async def get_all_students(self, skip: int, take: int):
+        return await student_repo.get_all(skip, take)
+
+
+student_service = StudentService()

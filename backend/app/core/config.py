@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     DETECTION_CONF_THRESH: float = 0.80
     RECOGNITION_THRESH: float = 0.7
 
+    START_TIME_HOUR: int = 8
+    START_TIME_MINUTE: int = 0
+    LATE_THRESHOLD_MINUTES: int = 15
+
     class Config:
         env_file = ".env"
 

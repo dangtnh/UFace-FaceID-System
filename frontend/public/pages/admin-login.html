@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UFace – Admin Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================= RESET & BASIC ================= */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ================= LAYOUT ================= */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 100%;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Cột Trái (Form) */
+    .left-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 420px; /* Độ rộng khớp với form register */
+    }
+
+    /* Cột Phải (Trang trí) */
+    .right-panel {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eff6ff;
+      overflow: hidden;
+    }
+
+    /* ================= BACKGROUND DECORATION ================= */
+    .decor-bg {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 30px 30px;
+      opacity: 0.5;
+      z-index: 1; pointer-events: none;
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); z-index: 0;
+    }
+    .blob-1 { top: -100px; left: -100px; width: 500px; height: 500px; background: #bfdbfe; opacity: 0.6; }
+    .blob-2 { bottom: -100px; right: -100px; width: 400px; height: 400px; background: #e9d5ff; opacity: 0.6; }
+
+    /* ================= COMPONENTS (Y Hệt Register) ================= */
+    
+    /* Logo Row */
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    /* Logo UFace */
+    .logo-uface {
+      height: 40px; /* h-10 */
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* Chữ UFace (Màu xanh đậm giống register) */
+    .brand-name {
+      font-size: 24px; /* text-2xl */
+      font-weight: 600; /* font-semibold */
+      color: #1d4ed8; /* text-blue-700 */
+      letter-spacing: -0.025em; /* tracking-tight */
+    }
+
+    /* Đường kẻ dọc */
+    .divider {
+      height: 24px; /* h-6 */
+      width: 1px;   /* w-px */
+      background-color: #d1d5db; /* bg-gray-300 */
+      margin: 0 4px; /* mx-1 */
+    }
+
+    /* Logo USTH */
+    .logo-usth {
+      height: 32px; /* h-8 */
+      width: auto;
+      object-fit: contain;
+      opacity: 0.95;
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 30px; /* text-3xl */
+      font-weight: 600; /* font-semibold */
+      color: #111827; /* text-gray-900 */
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .sub-text {
+      font-size: 14px; /* text-sm */
+      color: #4b5563; /* text-gray-600 */
+      margin-bottom: 32px;
+    }
+
+    /* Form Styles */
+    .form-group { margin-bottom: 20px; }
+
+    .label {
+      display: block;
+      font-size: 14px; /* text-sm */
+      color: #374151; /* text-gray-700 */
+      margin-bottom: 6px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px; /* rounded-lg */
+      outline: none;
+      background-color: #fff;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    .input-field:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb; /* btn-primary color */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-submit:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-submit:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    /* Right Panel Card */
+    .info-card {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+      max-width: 380px; width: 100%; z-index: 2;
+    }
+
+    .card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    
+    .card-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+    }
+
+    .stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px; margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .badge-active {
+      background-color: #dcfce7; color: #15803d;
+      padding: 4px 10px; border-radius: 99px;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .dot { width: 6px; height: 6px; background: #15803d; border-radius: 50%; }
+
+    /* Toast */
+    #toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      background-color: #1e293b; color: white;
+      padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      z-index: 100; pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #toast.error { background-color: #ef4444; }
+
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+      .right-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="decor-bg"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="container">
+    
+    <div class="left-panel">
+      <div class="form-wrapper">
+        
+        <div class="logo-row">
+          <img src="/images/logo.png" alt="UFace Logo" class="logo-uface" />
+          <span class="brand-name">UFace</span>
+          <div class="divider"></div>
+          <img src="/images/usth_logo.png" alt="USTH Logo" class="logo-usth" />
+        </div>
+
+        <h1>Welcome back</h1>
+        <p class="sub-text">Please enter your administrator credentials to access the dashboard.</p>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="label">Email address</label>
+            <input type="email" id="adminEmail" class="input-field" placeholder="admin@usth.edu.vn" required>
+          </div>
+
+          <div class="form-group">
+            <label class="label">Password</label>
+            <input type="password" id="adminPassword" class="input-field" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" id="loginBtn" class="btn-submit">Sign in to Dashboard</button>
+        </form>
+
+        <div class="footer">
+          Protected by UFace Security System v2.0<br>
+          &copy; 2024 USTH. All rights reserved.
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div style="position: absolute; width: 400px; height: 400px; background: #c7d2fe; filter: blur(100px); border-radius: 50%; opacity: 0.5;"></div>
+
+      <div class="info-card">
+        <div class="card-header">
+          <div class="card-icon">
+             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 18px; color: #1e293b;">Admin Control</div>
+            <div style="font-size: 12px; color: #64748b;">System Monitoring</div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <span style="font-size: 13px; font-weight: 500; color: #475569;">Database Status</span>
+          <div class="badge-active">
+            <div class="dot"></div> Active
+          </div>
+        </div>
+        <div class="stat-row">
+          <span style="font-size: 13px; font-weight: 500; color: #475569;">Total Students</span>
+          <span style="font-size: 14px; font-weight: 700; color: #1e293b;">2,450+</span>
+        </div>
+        <div class="stat-row">
+          <span style="font-size: 13px; font-weight: 500; color: #475569;">Today's Check-in</span>
+          <span style="font-size: 14px; font-weight: 700; color: #1e293b;">98.2%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast">Notification message</div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg, type = 'normal') {
+      toast.textContent = msg;
+      toast.className = type === 'error' ? 'error' : '';
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value.trim();
+
+      if (!email || !password) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      // UI Loading state
+      const originalText = loginBtn.textContent;
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Verifying...';
+
+      try {
+        // GỌI API LOGIN (Thay URL của bác vào đây)
+        const response = await fetch('http://localhost:8000/api/v1/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            username: email,
+            password: password
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Invalid credentials');
+        }
+
+        const data = await response.json();
+        
+        if(data.access_token) {
+            localStorage.setItem('adminToken', data.access_token);
+        }
+
+        showToast('Login successful! Redirecting...');
+        
+        setTimeout(() => {
+          window.location.href = '/pages/admin-dashboard.html';
+        }, 800);
+
+      } catch (err) {
+        console.error(err);
+        showToast(err.message, 'error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = originalText;
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UFace • Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="/assets/css/uface-theme.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== GLOBAL & LAYOUT (Reused) ===== */
+    body {
+      margin: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-image: linear-gradient(to bottom right, #c7ddff, #f4f7ff, #ffffff);
+      color: #111827;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px 20px;
+    }
+
+    .sidebar {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px 16px;
+    }
+
+    .main {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sb-header {
+      display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;
+    }
+    .sb-logo-img {
+      width: 38px; height: 38px; border-radius: 16px; object-fit: contain;
+      background: radial-gradient(circle at 0 0, #38bdf8, #2563eb); padding: 4px;
+    }
+    .sb-title { font-size: 15px; font-weight: 600; }
+    .sb-sub { font-size: 11px; color: #9ca3af; }
+
+    .sb-nav { margin-top: 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .sb-item {
+      display: flex; align-items: center; gap: 10px; padding: 8px 9px;
+      border-radius: 999px; font-size: 13px; color: #6b7280; text-decoration: none; transition: 0.15s;
+    }
+    .sb-icon {
+      width: 20px; height: 20px; border-radius: 7px; background: #eff2ff;
+      display: flex; align-items: center; justify-content: center; font-size: 11px; color: #4f46e5;
+    }
+    .sb-label { flex: 1; }
+    .sb-item:hover { background: #f3f4ff; color: #111827; transform: translateY(-1px); }
+    .sb-item.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff;
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+    }
+    .sb-item.active .sb-icon { background: rgba(255, 255, 255, 0.16); color: #ffffff; }
+
+    .sb-footer {
+      padding-top: 12px; border-top: 1px dashed #e5e7eb; display: flex; align-items: center; gap: 10px;
+    }
+    .sb-avatar {
+      width: 30px; height: 30px; border-radius: 999px; background: #e0ebff; color: #1d4ed8;
+      display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px;
+    }
+    .sb-user-name { font-size: 13px; font-weight: 500; }
+    .sb-user-role { font-size: 11px; color: #9ca3af; }
+
+    /* ===== TOPBAR ===== */
+    .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .topbar-title { font-size: 20px; font-weight: 600; }
+    .topbar-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
+    .topbar-right { font-size: 11px; color: #9ca3af; padding-top: 4px; }
+
+    /* ===== SETTINGS LAYOUT ===== */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 20px;
+    }
+
+    .set-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .set-header { padding-bottom: 12px; border-bottom: 1px dashed #e5e7eb; }
+    .set-title { font-size: 15px; font-weight: 600; color: #1f2937; }
+    .set-sub { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+    /* Profile Section */
+    .profile-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 10px 0; }
+    .profile-img-box { position: relative; }
+    .profile-img {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: linear-gradient(135deg, #e0e7ff, #eff6ff);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px; color: #2563eb; font-weight: 600;
+      border: 4px solid #f8fafc;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+    .profile-edit-btn {
+      position: absolute; bottom: 0; right: 0;
+      width: 28px; height: 28px; background: #2563eb; color: #fff;
+      border-radius: 50%; border: 2px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; cursor: pointer;
+    }
+    .profile-name { font-size: 16px; font-weight: 600; }
+    .profile-role {
+      font-size: 11px; padding: 4px 10px; border-radius: 99px;
+      background: #eff6ff; color: #1d4ed8; font-weight: 500;
+    }
+
+    /* Forms */
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 12px; font-weight: 500; color: #4b5563; }
+    .form-input {
+      border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px;
+      font-size: 13px; outline: none; transition: 0.15s; font-family: inherit;
+      background: #f9fafb;
+    }
+    .form-input:focus {
+      background: #ffffff; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .btn-save {
+      background: #2563eb; color: #ffffff; border: none;
+      padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: 0.15s; align-self: flex-start;
+    }
+    .btn-save:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+    /* Toggles */
+    .toggle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+    }
+    .toggle-label { font-size: 13px; font-weight: 500; color: #374151; }
+    .toggle-desc { font-size: 11px; color: #9ca3af; }
+    
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #e5e7eb; transition: .4s; border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+      background-color: white; transition: .4s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #2563eb; }
+    input:checked + .slider:before { transform: translateX(18px); }
+
+    /* System Info Grid inside card */
+    .sys-info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .sys-box {
+      background: #f8fafc; padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9;
+    }
+    .sys-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+    .sys-val { font-size: 13px; font-weight: 600; color: #0f172a; margin-top: 2px; }
+    .sys-status {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
+    }
+
+    @media (max-width: 960px) {
+      .shell { grid-template-columns: 1fr; padding: 14px; }
+      .sidebar { flex-direction: row; gap: 14px; }
+      .sb-nav { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .sb-footer { display: none; }
+      .settings-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="/images/logo.png" alt="UFace logo" class="sb-logo-img" />
+      <div>
+        <div class="sb-title">UFace</div>
+        <div class="sb-sub">Smart Attendance</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <a href="/pages/admin-dashboard.html" class="sb-item">
+        <div class="sb-icon">📊</div>
+        <span class="sb-label">Dashboard</span>
+      </a>
+      <a href="/pages/admin-classes.html" class="sb-item">
+        <div class="sb-icon">🏫</div>
+        <span class="sb-label">Classes</span>
+      </a>
+      <a href="/pages/admin-students.html" class="sb-item">
+        <div class="sb-icon">👨‍🎓</div>
+        <span class="sb-label">Students</span>
+      </a>
+      <a href="/pages/admin-settings.html" class="sb-item active">
+        <div class="sb-icon">⚙️</div>
+        <span class="sb-label">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-avatar">A</div>
+      <div>
+        <div class="sb-user-name">Admin</div>
+        <div class="sb-user-role">System Admin</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Settings</div>
+        <div class="topbar-sub">Manage your account and system preferences.</div>
+      </div>
+    </header>
+
+    <div class="settings-grid">
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        
+        <section class="set-card">
+          <div class="set-header">
+            <div class="set-title">My Profile</div>
+            <div class="set-sub">Account details</div>
+          </div>
+          
+          <div class="profile-wrap">
+            <div class="profile-img-box">
+              <div class="profile-img">A</div>
+              <div class="profile-edit-btn">📷</div>
+            </div>
+            <div style="text-align:center;">
+              <div class="profile-name">System Administrator</div>
+              <div style="margin-top:4px;"><span class="profile-role">Super Admin</span></div>
+            </div>
+          </div>
+
+          <form id="profile-form" onsubmit="event.preventDefault(); saveSettings('Profile updated!');">
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label class="form-label">Display Name</label>
+              <input type="text" class="form-input" value="System Administrator" />
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" value="admin@uface.usth.edu.vn" />
+            </div>
+            <button type="submit" class="btn-save" style="width:100%">Save Profile</button>
+          </form>
+        </section>
+
+        <section class="set-card">
+          <div class="set-header">
+            <div class="set-title">System Health</div>
+          </div>
+          <div class="sys-info-grid">
+            <div class="sys-box">
+              <div class="sys-label">Server</div>
+              <div class="sys-val"><span class="sys-status" style="background:#22c55e;"></span>Online</div>
+            </div>
+            <div class="sys-box">
+              <div class="sys-label">Camera API</div>
+              <div class="sys-val"><span class="sys-status" style="background:#22c55e;"></span>Ready</div>
+            </div>
+            <div class="sys-box">
+              <div class="sys-label">Version</div>
+              <div class="sys-val">v2.4.0</div>
+            </div>
+            <div class="sys-box">
+              <div class="sys-label">Database</div>
+              <div class="sys-val">Stable</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        
+        <section class="set-card">
+          <div class="set-header">
+            <div class="set-title">Security</div>
+            <div class="set-sub">Update your password</div>
+          </div>
+
+          <form id="security-form" onsubmit="event.preventDefault(); saveSettings('Password changed successfully!');">
+            <div class="form-group">
+              <label class="form-label">Current Password</label>
+              <input type="password" class="form-input" placeholder="••••••••" />
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px;">
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" class="form-input" placeholder="New password" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" class="form-input" placeholder="Confirm new" />
+              </div>
+            </div>
+            <div style="margin-top:16px; text-align:right;">
+              <button type="submit" class="btn-save">Update Password</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="set-card">
+          <div class="set-header">
+            <div class="set-title">Preferences</div>
+            <div class="set-sub">System notifications and display</div>
+          </div>
+
+          <div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Email Notifications</div>
+                <div class="toggle-desc">Receive weekly attendance reports</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div style="height:1px; background:#f3f4f6; margin:8px 0;"></div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Absence Alerts</div>
+                <div class="toggle-desc">Notify when a student exceeds 30% absence</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div style="height:1px; background:#f3f4f6; margin:8px 0;"></div>
+
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Dark Mode (Beta)</div>
+                <div class="toggle-desc">Switch to dark theme interface</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  function saveSettings(msg) {
+    // Giả lập việc lưu dữ liệu
+    // Trong thực tế, bạn sẽ gọi API ở đây
+    
+    // Tạo hiệu ứng nút bấm
+    const btns = document.querySelectorAll('.btn-save');
+    btns.forEach(btn => {
+      const originalText = btn.textContent;
+      btn.textContent = "Saving...";
+      btn.style.opacity = "0.7";
+      
+      setTimeout(() => {
+        alert(msg); // Hiển thị thông báo đơn giản
+        btn.textContent = originalText;
+        btn.style.opacity = "1";
+      }, 600);
+    });
+  }
+</script>
+
+</body>
+</html>

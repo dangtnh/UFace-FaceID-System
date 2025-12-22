@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UFace • Students</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="/assets/css/uface-theme.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== GLOBAL & LAYOUT (Copy from previous files) ===== */
+    body {
+      margin: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-image: linear-gradient(to bottom right, #c7ddff, #f4f7ff, #ffffff);
+      color: #111827;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px 20px;
+    }
+
+    .sidebar {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px 16px;
+    }
+
+    .main {
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ===== SIDEBAR STYLES ===== */
+    .sb-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sb-logo-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 16px;
+      object-fit: contain;
+      background: radial-gradient(circle at 0 0, #38bdf8, #2563eb);
+      padding: 4px;
+    }
+
+    .sb-title { font-size: 15px; font-weight: 600; }
+    .sb-sub { font-size: 11px; color: #9ca3af; }
+
+    .sb-nav {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 9px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #6b7280;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .sb-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 7px;
+      background: #eff2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #4f46e5;
+    }
+
+    .sb-label { flex: 1; }
+
+    .sb-item:hover { background: #f3f4ff; color: #111827; transform: translateY(-1px); }
+    
+    .sb-item.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
+    }
+    .sb-item.active .sb-icon { background: rgba(255, 255, 255, 0.16); color: #ffffff; }
+
+    .sb-footer {
+      padding-top: 12px;
+      border-top: 1px dashed #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sb-avatar {
+      width: 30px; height: 30px; border-radius: 999px;
+      background: #e0ebff; color: #1d4ed8;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 13px;
+    }
+    .sb-user-name { font-size: 13px; font-weight: 500; }
+    .sb-user-role { font-size: 11px; color: #9ca3af; }
+
+    /* ===== TOPBAR & FILTERS ===== */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+    }
+    .topbar-title { font-size: 20px; font-weight: 600; }
+    .topbar-sub { font-size: 13px; color: #6b7280; margin-top: 4px; }
+    .topbar-right { font-size: 11px; color: #9ca3af; padding-top: 4px; }
+
+    .filter-bar {
+      border-radius: 18px;
+      background: radial-gradient(circle at 0 0, #e0ecff, #ffffff);
+      border: 1px solid #e5e7eb;
+      padding: 10px 14px;
+      display: flex; flex-wrap: wrap; gap: 8px 16px;
+      align-items: center; justify-content: space-between;
+    }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+    .filter-label { font-size: 12px; font-weight: 500; color: #4b5563; margin-right: 4px; }
+    
+    .filter-search { position: relative; display: inline-flex; align-items: center; }
+    .filter-search input { padding-left: 28px; }
+    .search-icon { position: absolute; left: 9px; font-size: 13px; color: #9ca3af; pointer-events: none; }
+    
+    .filter-input, .filter-select {
+      border-radius: 999px; border: 1px solid #e5e7eb;
+      padding: 6px 10px; font-size: 12px; outline: none; background: #ffffff;
+    }
+    .filter-input:focus, .filter-select:focus {
+      border-color: #2563eb; box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
+    }
+
+    .pill-group {
+      display: inline-flex; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85); border: 1px solid #d1d5db; overflow: hidden;
+    }
+    .pill {
+      padding: 5px 12px; font-size: 11px; border: none; background: transparent;
+      cursor: pointer; color: #6b7280; transition: 0.12s;
+    }
+    .pill.active { background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff; }
+    .pill + .pill { border-left: 1px solid #e5e7eb; }
+
+    .btn-reset {
+      border-radius: 999px; border: 1px solid #cbd5f5; padding: 4px 12px;
+      font-size: 11px; background: rgba(255, 255, 255, 0.9); color: #4b5563; cursor: pointer;
+    }
+    .btn-reset:hover { border-color: #2563eb; color: #1d4ed8; }
+
+    /* ===== STUDENT CARD GRID ===== */
+    .students-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .st-card {
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 12px;
+      transition: transform 0.12s ease, border-color 0.12s;
+    }
+    .st-card:hover { transform: translateY(-3px); border-color: #2563eb; }
+
+    .st-header {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .st-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: #eef2ff; color: #2563eb;
+      font-size: 18px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.15);
+    }
+    /* Different avatar colors based on random logic or class */
+    .st-avatar.orange { background: #fff7ed; color: #ea580c; }
+    .st-avatar.green { background: #f0fdf4; color: #16a34a; }
+    .st-avatar.purple { background: #faf5ff; color: #9333ea; }
+
+    .st-info { display: flex; flex-direction: column; }
+    .st-name { font-size: 14px; font-weight: 600; color: #1f2937; }
+    .st-id { font-size: 11px; color: #6b7280; font-family: monospace; letter-spacing: 0.02em; }
+
+    .st-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+    .st-badge {
+      border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 500;
+    }
+    .badge-year { background: rgba(37,99,235,0.08); color: #1d4ed8; }
+    .badge-major { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+    .badge-risk { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+
+    .st-body {
+      padding-top: 12px; border-top: 1px dashed #e5e7eb;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .st-row { display: flex; justify-content: space-between; font-size: 12px; }
+    .st-label { color: #9ca3af; }
+    .st-val { font-weight: 500; color: #374151; }
+
+    .st-actions { margin-top: auto; display: flex; gap: 8px; }
+    .btn-view {
+      flex: 1; text-align: center;
+      padding: 6px; border-radius: 8px;
+      font-size: 12px; font-weight: 500;
+      background: #eff6ff; color: #2563eb; border: 1px solid transparent;
+      cursor: pointer; transition: 0.1s;
+    }
+    .btn-view:hover { background: #2563eb; color: #ffffff; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px);
+      display: none; align-items: center; justify-content: center; z-index: 50;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #ffffff; border-radius: 20px;
+      width: min(500px, 90vw); max-height: 90vh;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+      animation: modalIn 0.2s ease-out;
+      display: flex; flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 18px 20px; border-bottom: 1px solid #e5e7eb;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-title { font-size: 16px; font-weight: 600; }
+    .modal-close {
+      border: none; background: transparent; font-size: 20px; color: #9ca3af; cursor: pointer;
+    }
+
+    .modal-content { padding: 20px; overflow-y: auto; }
+    
+    .m-profile {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+    }
+    .m-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: #eff6ff; color: #2563eb; font-size: 24px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-name { font-size: 18px; font-weight: 600; }
+    .m-id { font-size: 13px; color: #6b7280; }
+    
+    .m-section-title {
+      font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+
+    /* Course List in Modal */
+    .course-list { display: flex; flex-direction: column; gap: 10px; }
+    .course-item {
+      border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 12px;
+      background: #f9fafb;
+    }
+    .c-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .c-name { font-size: 13px; font-weight: 600; color: #111827; }
+    .c-code { font-size: 11px; color: #6b7280; }
+    
+    .c-stats { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+    .c-rate { font-weight: 600; }
+    .c-rate.good { color: #16a34a; }
+    .c-rate.bad { color: #dc2626; }
+
+    .c-bar {
+      height: 6px; width: 100%; background: #e5e7eb; border-radius: 99px; overflow: hidden;
+    }
+    .c-bar-fill { height: 100%; border-radius: 99px; }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .shell { grid-template-columns: 1fr; padding: 14px; }
+      .sidebar { flex-direction: row; gap: 14px; }
+      .sb-nav { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+      .sb-footer { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-header">
+      <img src="/images/logo.png" alt="UFace logo" class="sb-logo-img" />
+      <div>
+        <div class="sb-title">UFace</div>
+        <div class="sb-sub">Smart Attendance</div>
+      </div>
+    </div>
+    
+
+    <nav class="sb-nav">
+      <a href="/pages/admin-dashboard.html" class="sb-item">
+        <div class="sb-icon">📊</div>
+        <span class="sb-label">Dashboard</span>
+      </a>
+      <a href="/pages/admin-classes.html" class="sb-item">
+        <div class="sb-icon">🏫</div>
+        <span class="sb-label">Classes</span>
+      </a>
+      <a href="/pages/admin-students.html" class="sb-item active">
+        <div class="sb-icon">👨‍🎓</div>
+        <span class="sb-label">Students</span>
+      </a>
+      <a href="/pages/admin-settings.html" class="sb-item">
+        <div class="sb-icon">⚙️</div>
+        <span class="sb-label">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-avatar">A</div>
+      <div>
+        <div class="sb-user-name">Admin</div>
+        <div class="sb-user-role">System Admin</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Students</div>
+        <div class="topbar-sub">Manage student records, enrollment and attendance tracking.</div>
+      </div>
+      <div class="topbar-right">
+        Semester 2024–2025
+      </div>
+    </header>
+
+    <section class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Search:</span>
+        <div class="filter-search">
+          <span class="search-icon">🔍</span>
+          <input id="search-input" class="filter-input" type="text" placeholder="Name / Student ID..." style="width: 220px;" />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Year:</span>
+        <div class="pill-group">
+          <button class="pill active" data-filter="year" data-val="">All</button>
+          <button class="pill" data-filter="year" data-val="B1">B1</button>
+          <button class="pill" data-filter="year" data-val="B2">B2</button>
+          <button class="pill" data-filter="year" data-val="B3">B3</button>
+        </div>
+
+        <select id="major-select" class="filter-select">
+          <option value="">All Majors</option>
+          <option value="ICT">ICT</option>
+          <option value="BI">BI</option>
+          <option value="AI">AI</option>
+          <option value="PHYS">PHYS</option>
+        </select>
+
+        <button id="btn-reset" class="btn-reset" type="button">Reset</button>
+      </div>
+    </section>
+
+    <section class="students-grid" id="students-container">
+      </section>
+  </main>
+</div>
+
+<div class="modal-overlay" id="studentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Student Details</div>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-content">
+      <div class="m-profile">
+        <div class="m-avatar" id="m-avatar">A</div>
+        <div>
+          <div class="m-name" id="m-name">Nguyen Van A</div>
+          <div class="m-id" id="m-id">BA11-001</div>
+          <div style="margin-top:4px; font-size:12px; color:#6b7280;" id="m-email">a@usth.edu.vn</div>
+        </div>
+      </div>
+
+      <div class="m-section-title">Attendance per Class</div>
+      <div class="course-list" id="m-course-list">
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- MOCK DATA ---
+  const studentsData = [
+    { 
+      id: "BI12-045", name: "Le Hoang Long", email: "longlh.bi12@usth.edu.vn", year: "B2", major: "ICT", 
+      risk: true, 
+      courses: [
+        { code: "ICT3.017", name: "Live Camera - Face Attendance", attended: 7, total: 12 },
+        { code: "ICT4.210", name: "Distributed Systems", attended: 10, total: 10 },
+        { code: "MATH2.301", name: "Linear Algebra", attended: 8, total: 12 } // Low
+      ]
+    },
+    { 
+      id: "BA13-102", name: "Pham Mai Anh", email: "anhpm.ba13@usth.edu.vn", year: "B1", major: "BI", 
+      risk: false,
+      courses: [
+        { code: "23BI-INF201", name: "Data Structures & Algo", attended: 8, total: 11 },
+        { code: "CHEM1.102", name: "General Chemistry", attended: 12, total: 12 }
+      ]
+    },
+    { 
+      id: "AI11-009", name: "Nguyen Huu Dat", email: "datnh.ai11@usth.edu.vn", year: "B3", major: "AI", 
+      risk: true,
+      courses: [
+        { code: "AI4.102", name: "Intro to Machine Learning", attended: 5, total: 8 },
+        { code: "AI4.205", name: "Deep Learning", attended: 9, total: 10 }
+      ]
+    },
+    { 
+      id: "BI12-156", name: "Tran Thu Huong", email: "huongtt.bi12@usth.edu.vn", year: "B2", major: "ICT", 
+      risk: false,
+      courses: [
+        { code: "ICT3.017", name: "Live Camera - Face Attendance", attended: 9, total: 13 },
+        { code: "WEB2.101", name: "Web Application Dev", attended: 14, total: 15 }
+      ]
+    },
+    { 
+      id: "PH13-022", name: "Vo Minh Tuan", email: "tuanvm.ph13@usth.edu.vn", year: "B1", major: "PHYS", 
+      risk: false,
+      courses: [
+        { code: "PHY2.204", name: "Physics Lab - Optics", attended: 6, total: 6 },
+        { code: "MATH1.101", name: "Calculus I", attended: 11, total: 12 }
+      ]
+    },
+    { 
+      id: "AI11-088", name: "Doan Hai Yen", email: "yendh.ai11@usth.edu.vn", year: "B3", major: "AI", 
+      risk: false,
+      courses: [
+        { code: "AI4.102", name: "Intro to Machine Learning", attended: 8, total: 8 },
+        { code: "ICT4.210", name: "Distributed Systems", attended: 10, total: 10 }
+      ]
+    }
+  ];
+
+  // --- RENDER FUNCTIONS ---
+  const gridContainer = document.getElementById('students-container');
+  const modal = document.getElementById('studentModal');
+  const modalClose = document.getElementById('modalClose');
+
+  function getAvatarColor(char) {
+    const code = char.charCodeAt(0);
+    if (code % 3 === 0) return 'orange';
+    if (code % 3 === 1) return 'green';
+    return 'purple';
+  }
+
+  function renderStudents(list) {
+    gridContainer.innerHTML = "";
+    if(list.length === 0) {
+      gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #9ca3af; padding: 40px;">No students found matching filters.</div>`;
+      return;
+    }
+
+    list.forEach(student => {
+      const firstChar = student.name.charAt(0).toUpperCase();
+      const colorClass = getAvatarColor(firstChar);
+      
+      const riskBadge = student.risk 
+        ? `<span class="st-badge badge-risk">Attendance Risk</span>` 
+        : '';
+
+      const cardHTML = `
+        <div class="st-card">
+          <div class="st-header">
+            <div class="st-avatar ${colorClass}">${firstChar}</div>
+            <div class="st-info">
+              <div class="st-name">${student.name}</div>
+              <div class="st-id">${student.id}</div>
+              <div class="st-badges">
+                <span class="st-badge badge-year">${student.year}</span>
+                <span class="st-badge badge-major">${student.major}</span>
+                ${riskBadge}
+              </div>
+            </div>
+          </div>
+          <div class="st-body">
+            <div class="st-row">
+              <span class="st-label">Email</span>
+              <span class="st-val" style="font-size:11px;">${student.email}</span>
+            </div>
+            <div class="st-row">
+              <span class="st-label">Enrolled</span>
+              <span class="st-val">${student.courses.length} Classes</span>
+            </div>
+          </div>
+          <div class="st-actions">
+            <button class="btn-view" onclick="openModal('${student.id}')">View Details</button>
+          </div>
+        </div>
+      `;
+      gridContainer.innerHTML += cardHTML;
+    });
+  }
+
+  // --- FILTER LOGIC ---
+  const searchInput = document.getElementById('search-input');
+  const majorSelect = document.getElementById('major-select');
+  const yearPills = document.querySelectorAll('.pill[data-filter="year"]');
+  const resetBtn = document.getElementById('btn-reset');
+
+  let activeYear = ""; // "" = All
+
+  function applyFilters() {
+    const term = searchInput.value.toLowerCase().trim();
+    const major = majorSelect.value;
+    
+    const filtered = studentsData.filter(s => {
+      const matchSearch = s.name.toLowerCase().includes(term) || s.id.toLowerCase().includes(term);
+      const matchMajor = major === "" || s.major === major;
+      const matchYear = activeYear === "" || s.year === activeYear;
+      return matchSearch && matchMajor && matchYear;
+    });
+
+    renderStudents(filtered);
+  }
+
+  // Event Listeners for Filters
+  searchInput.addEventListener('input', applyFilters);
+  majorSelect.addEventListener('change', applyFilters);
+
+  yearPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      yearPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeYear = pill.dataset.val;
+      applyFilters();
+    });
+  });
+
+  resetBtn.addEventListener('click', () => {
+    searchInput.value = "";
+    majorSelect.value = "";
+    activeYear = "";
+    yearPills.forEach(p => p.classList.remove('active'));
+    document.querySelector('.pill[data-val=""]').classList.add('active');
+    applyFilters();
+  });
+
+  // --- MODAL LOGIC ---
+  window.openModal = function(studentId) {
+    const s = studentsData.find(x => x.id === studentId);
+    if (!s) return;
+
+    // Populate Info
+    document.getElementById('m-name').textContent = s.name;
+    document.getElementById('m-id').textContent = s.id + " • " + s.major + " • " + s.year;
+    document.getElementById('m-email').textContent = s.email;
+    
+    const av = document.getElementById('m-avatar');
+    av.textContent = s.name.charAt(0);
+    av.className = `m-avatar ${getAvatarColor(s.name.charAt(0))}`;
+
+    // Populate Courses
+    const listContainer = document.getElementById('m-course-list');
+    listContainer.innerHTML = "";
+    
+    s.courses.forEach(c => {
+      const percent = Math.round((c.attended / c.total) * 100);
+      let color = "#22c55e"; // Green
+      let rateClass = "good";
+      
+      if (percent < 70) { color = "#ef4444"; rateClass = "bad"; }
+      else if (percent < 85) { color = "#f97316"; } // Orange
+
+      const item = `
+        <div class="course-item">
+          <div class="c-header">
+            <span class="c-name">${c.name}</span>
+            <span class="c-code">${c.code}</span>
+          </div>
+          <div class="c-stats">
+            <span>Attended: <b>${c.attended}/${c.total}</b></span>
+            <span class="c-rate ${rateClass}">${percent}%</span>
+          </div>
+          <div class="c-bar">
+            <div class="c-bar-fill" style="width: ${percent}%; background: ${color};"></div>
+          </div>
+        </div>
+      `;
+      listContainer.innerHTML += item;
+    });
+
+    modal.classList.add('open');
+  }
+
+  modalClose.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+
+  // Initial Render
+  renderStudents(studentsData);
+
+</script>
+</body>
+</html>

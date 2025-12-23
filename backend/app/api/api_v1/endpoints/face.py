@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from app.services.face_service import face_service
+from app.services.face import face_service
 from app.services.attendance import attendance_service
 
 router = APIRouter()

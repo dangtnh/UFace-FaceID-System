@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import UploadFile
 from app.schemas.student import StudentCreate
-from app.repositories.student_repo import student_repo
-from app.services.face_service import face_service
+from app.repositories.student import student_repo
+from app.services.face import face_service
 
 
 class StudentService:

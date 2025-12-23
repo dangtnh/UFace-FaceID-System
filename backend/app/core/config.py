@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     START_TIME_MINUTE: int = 0
     LATE_THRESHOLD_MINUTES: int = 15
 
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "unsafe-secret-key-change-me-please")
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
     class Config:
         env_file = ".env"
 

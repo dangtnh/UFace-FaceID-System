@@ -2,7 +2,7 @@ from typing import List
 from fastapi import UploadFile
 import numpy as np
 from app.services.ai_engine.pipeline import ai_engine
-from app.repositories.vector_repo import vector_repo
+from app.repositories.face import vector_repo
 from app.core.config import settings
 
 

@@ -4,24 +4,41 @@ generator client {
   recursive_type_depth = 5
 }
 
-// Generator cho Node.js 
 generator client_js {
   provider = "prisma-client-js"
 }
 
-// Kết nối DB 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  admin
+  teacher
+  student
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?
+  password_hash String
+  role          UserRole @default(student)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("users")
+}
+
 model Student {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   fullName    String
-  studentId   String    @unique
-  schoolEmail String    @unique
-  status      String    @default("active")
-  createdAt   DateTime  @default(now())
+  studentId   String   @unique
+  schoolEmail String   @unique
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
   faceImages  FaceImage[]
 }
 
@@ -30,9 +47,8 @@ model FaceImage {
   studentId Int
   angle     FaceAngle
   filePath  String
-  embedding Json?     // Vector đặc trưng khuôn mặt
+  embedding Json?
   createdAt DateTime  @default(now())
-
   student   Student   @relation(fields: [studentId], references: [id])
 }
 

@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from app.schemas.student import StudentResponse
-from app.services.student_service import student_service
+from app.services.student import student_service
 
 router = APIRouter()
 

@@ -326,6 +326,7 @@
     const loginBtn = document.getElementById('loginBtn');
     const toast = document.getElementById('toast');
 
+    // Hàm hiển thị thông báo
     function showToast(msg, type = 'normal') {
       toast.textContent = msg;
       toast.className = type === 'error' ? 'error' : '';
@@ -335,6 +336,11 @@
         toast.classList.remove('show');
       }, 3000);
     }
+
+    window.onload = function() {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('userInfo');
+    };
 
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -347,49 +353,55 @@
         return;
       }
 
-      // UI Loading state
+      // Hiệu ứng Loading cho nút bấm
       const originalText = loginBtn.textContent;
       loginBtn.disabled = true;
       loginBtn.textContent = 'Verifying...';
 
       try {
-        // GỌI API LOGIN (Thay URL của bác vào đây)
-        const response = await fetch('http://localhost:8000/api/v1/admin/login', {
+        // GỌI API LOGIN (Backend Port 8000)
+        const response = await fetch('http://localhost:8000/api/v1/users/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json' 
           },
           body: JSON.stringify({
-            username: email,
+            email: email,     
             password: password
           })
         });
 
+        // Xử lý nếu đăng nhập thất bại
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.detail || 'Invalid credentials');
         }
 
+        // --- ĐĂNG NHẬP THÀNH CÔNG ---
         const data = await response.json();
         
+        // Lưu Token và User Info
         if(data.access_token) {
-            localStorage.setItem('adminToken', data.access_token);
+            localStorage.setItem('accessToken', data.access_token);
+            localStorage.setItem('userInfo', JSON.stringify(data.user));
         }
 
         showToast('Login successful! Redirecting...');
         
         setTimeout(() => {
           window.location.href = '/pages/admin-dashboard.html';
-        }, 800);
+        }, 1000);
 
       } catch (err) {
         console.error(err);
-        showToast(err.message, 'error');
+        showToast(err.message, 'error'); 
+      } finally {
         loginBtn.disabled = false;
         loginBtn.textContent = originalText;
       }
     });
   </script>
+  <script src="/assets/js/logout.js"></script>
 
 </body>
 </html>

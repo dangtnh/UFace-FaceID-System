@@ -8,7 +8,7 @@ Automated Attendance and Face Recognition System built on **FastAPI**, **Postgre
 - Automatically encode faces into Vectors and store in the Database.
 - Fully packaged system with Docker & Docker Compose.
 
-# 🛠 Yêu cầu hệ thống (Prerequisites)
+# 🛠 System Requirements (Prerequisites)
 To run the project, your machine needs to have the following installed:
 - **Git**
 - **Docker** & **Docker Compose** (latest version)

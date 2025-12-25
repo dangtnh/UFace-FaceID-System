@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 from app.repositories.user import user_repo
+from app.repositories.session import session_repo
 from app.core.security import verify_password, create_access_token, hash_password
 from app.schemas.user import (
     CreateUserRequest,
@@ -12,7 +13,9 @@ from app.core.config import settings
 
 
 class UserService:
-    async def login(self, data: LoginRequest) -> LoginResponse:
+    async def login(
+        self, data: LoginRequest, user_agent: str = None, ip: str = None
+    ) -> LoginResponse:
         user = await user_repo.get_by_email(data.email)
 
         if not user or not verify_password(data.password, user.password_hash):
@@ -26,16 +29,30 @@ class UserService:
                 status_code=status.HTTP_403_FORBIDDEN, detail="Tài khoản đã bị khóa."
             )
 
+        # 1. Tính thời gian hết hạn cho Session (khớp với thời gian Token)
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire_date = datetime.now(timezone.utc) + access_token_expires
+
+        # 2. Lưu Session vào Database
+        session = await session_repo.create(
+            user_id=user.id, user_agent=user_agent, ip=ip, expires_at=expire_date
+        )
+
+        # 3. Tạo Token và nhét Session ID (jti) vào trong đó
         access_token = create_access_token(
-            subject=user.id,
-            expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+            subject=user.id, expires_delta=access_token_expires, jti=session.id
         )
 
         return LoginResponse(
             access_token=access_token,
             token_type="bearer",
-            user=user,  # Trả về cả object User (Pydantic sẽ tự map)
+            user=user,
         )
+
+    async def logout(self, session_id: str):
+        """Hủy phiên đăng nhập"""
+        if session_id:
+            await session_repo.revoke(session_id)
 
     async def create_user(self, data: CreateUserRequest):
         # 1. Check trùng email

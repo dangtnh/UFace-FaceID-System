@@ -19,7 +19,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # 2. Cấu hình JWT
 def create_access_token(
-    subject: Union[str, Any], expires_delta: timedelta = None
+    subject: Union[str, Any], expires_delta: timedelta = None, jti: str = None
 ) -> str:
     """Tạo Access Token (ngắn hạn - thường 15-30p)"""
     if expires_delta:
@@ -31,11 +31,11 @@ def create_access_token(
 
     # Payload chứa thông tin user
     to_encode = {
-        "sub": str(subject),  # Subject (thường là User ID)
-        "exp": expire,  # Thời gian hết hạn
-        "iat": datetime.now(timezone.utc),  # Thời gian phát hành
+        "sub": str(subject),
+        "exp": expire,
+        "iat": datetime.now(timezone.utc),
         "type": "access",
-        "jti": str(uuid4()),  # Unique ID cho token này
+        "jti": jti if jti else str(uuid4()),
     }
 
     encoded_jwt = jwt.encode(

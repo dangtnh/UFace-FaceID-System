@@ -1,8 +1,12 @@
 from typing import Any, List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from app.services.user import user_service
-from app.core.session import require_authenticated, require_roles, get_current_admin
-
+from app.core.session import (
+    require_authenticated,
+    require_roles,
+    get_current_admin,
+    get_current_jti,
+)
 from app.schemas.user import (
     CreateUserRequest,
     UpdateUserRequest,
@@ -16,8 +20,22 @@ router = APIRouter()
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login(payload: LoginRequest) -> Any:
-    return await user_service.login(payload)
+async def login(payload: LoginRequest, request: Request) -> Any:
+    # 1. Lấy User-Agent (Trình duyệt/Thiết bị)
+    user_agent = request.headers.get("user-agent")
+
+    # 2. Lấy IP Address
+    ip = request.client.host if request.client else None
+
+    return await user_service.login(payload, user_agent=user_agent, ip=ip)
+
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(
+    session_id: str = Depends(get_current_jti), _: Any = Depends(require_authenticated)
+) -> Any:
+    await user_service.logout(session_id)
+    return {"message": "Đăng xuất thành công"}
 
 
 @router.get("/me", response_model=UserResponse)

@@ -10,11 +10,29 @@ Automated Attendance and Face Recognition System built on **FastAPI**, **Postgre
 
 # 🛠 System Requirements (Prerequisites)
 To run the project, your machine needs to have the following installed:
-- **Git**
-- **Docker** & **Docker Compose** (latest version)
+- **Git**.
+- **Docker** & **Docker Compose** (latest version).
 
+
+
+# ⚡ Performance Optimization (Optional: GPU Support)
+By default, the system runs on CPU to keep the installation size small (~1GB). If you have a supported NVIDIA GPU and want faster face recognition (10x-20x speedup), follow these steps:
+1. Open **requirements.txt**.
+2. Remove the first line: **--extra-index-url https://download.pytorch.org/whl/cpu**.
+3. Edit the torch versions to remove +cpu:
+```
+torch>=2.2.0
+torchvision>=0.17.0
+```
+4. Add the GPU index URL to the top of the file:
+```
+--extra-index-url [https://download.pytorch.org/whl/cu118](https://download.pytorch.org/whl/cu118)
+```
+5. Rebuild the container and follow the next step to build system on your computer: 
+```
+docker compose up --build -d
+```
 ---
-
 # ⚙️ System Installation and Usage Guide (Quick Start)
 ## 1. Clone from git repository
 ```

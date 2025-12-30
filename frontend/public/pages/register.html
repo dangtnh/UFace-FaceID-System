@@ -6,9 +6,7 @@
   <title>UFace – Register for identification</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-
   <link rel="stylesheet" href="/assets/css/uface-theme.css">
-
   <link rel="icon" href="data:,">
 </head>
 <body class="uface-bg relative">
@@ -28,18 +26,13 @@
   </div>
 
   <div class="grid min-h-screen grid-cols-1 lg:grid-cols-2 relative z-10">
-
     <div class="flex items-center justify-center p-6 lg:p-10 bg-white/70 backdrop-blur-md">
       <div class="w-full max-w-lg">
-
         <div class="mb-8 flex items-center justify-between">
           <div class="flex items-center gap-3">
-
             <img src="/images/logo.png" alt="UFace Logo" class="h-10 w-auto object-contain" />
-
             <span class="text-2xl font-semibold tracking-tight text-blue-700">UFace</span>
             <div class="h-6 w-px bg-gray-300 mx-1"></div>
-
             <img src="/images/usth_logo.png" alt="USTH Logo" class="h-8 w-auto object-contain opacity-95" />
           </div>
         </div>
@@ -76,44 +69,31 @@
 
     <div class="flex items-stretch justify-center p-6 lg:px-10 lg:pb-10 lg:pt-24">
       <div id="faceCard" class="card w-full max-w-4xl p-4 md:p-5 shadow-lg">
-
         <div class="mb-3 flex items-center justify-between gap-3">
           <div>
             <div class="text-base font-semibold">Face Photo (5 Angles)</div>
-            <div id="angleHint" class="hint">
-              Tap “Open Camera” to get started.
-            </div>
+            <div id="angleHint" class="hint">Tap “Open Camera” to get started.</div>
           </div>
           <div class="flex gap-2">
-            <button id="openCameraBtn" type="button" class="btn-secondary">
-              Open camera
-            </button>
-            <button id="captureBtn" type="button" class="btn-secondary hidden">
-              Take a picture
-            </button>
+            <button id="openCameraBtn" type="button" class="btn-secondary">Open camera</button>
+            <button id="captureBtn" type="button" class="btn-secondary hidden">Take a picture</button>
           </div>
         </div>
 
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 items-stretch">
-
           <div class="relative col-span-7 overflow-hidden rounded-xl bg-black/5 flex flex-col">
             <div class="relative w-full rounded-xl overflow-hidden flex-1 min-h-[460px] md:min-h-[540px] lg:min-h-[600px] cam-wrap">
               <video id="video" autoplay playsinline class="absolute inset-0 w-full h-full object-cover rounded-xl"></video>
               <canvas id="canvas" class="hidden"></canvas>
             </div>
-
             <div class="pointer-events-none absolute left-3 top-3 rounded bg-black/50 px-2 py-1 text-xs text-white">
               <span id="statusBadge">Camera's off</span>
             </div>
-
             <div class="pointer-events-none absolute bottom-3 right-3 rounded bg-black/50 px-2 py-1 text-xs text-white">
               Keep light, do not cover face
             </div>
-
             <div class="mt-3 rounded-xl border border-gray-200 bg-white/70 p-3">
-              <div class="mb-2 text-[13px] font-semibold text-slate-800">
-                Tips for better face photos
-              </div>
+              <div class="mb-2 text-[13px] font-semibold text-slate-800">Tips for better face photos</div>
               <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[12px] text-slate-600">
                 <li>Use even lighting and avoid backlight.</li>
                 <li>Remove masks, glasses, or hats if possible.</li>
@@ -125,15 +105,12 @@
 
           <div class="col-span-5">
             <div class="grid grid-cols-2 gap-3">
-
               <template id="angleCardTemplate">
                 <div class="thumb hover:shadow-md transition">
                   <div class="mb-2 text-sm font-medium angle-title text-gray-700">—</div>
                   <div class="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
                     <img class="h-full w-full object-cover angle-img hidden" />
-                    <div class="absolute inset-0 grid place-content-center text-xs text-gray-400 angle-placeholder">
-                      Not taken yet
-                    </div>
+                    <div class="absolute inset-0 grid place-content-center text-xs text-gray-400 angle-placeholder">Not taken yet</div>
                   </div>
                   <div class="mt-2 flex gap-2">
                     <button type="button" class="btn-secondary text-xs angle-capture">Take</button>
@@ -141,14 +118,12 @@
                   </div>
                 </div>
               </template>
-
               <div id="anglesContainer" class="grid grid-cols-2 gap-3 col-span-2"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
   <div id="toast" class="pointer-events-none fixed left-1/2 top-4 z-50 hidden -translate-x-1/2 rounded-xl bg-black px-4 py-2 text-sm text-white"></div>
@@ -237,21 +212,59 @@
 
     form.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      //if(Object.keys(captures).length < 5){showToast('Please capture all 5 angles.'); return;}
-      submitBtn.disabled=true; submitBtn.textContent='Submitting...';
+      
+      // Validate: Bắt buộc chụp đủ 5 ảnh
+      if(Object.keys(captures).length < 5){
+        showToast('Please capture all 5 angles.'); 
+        return;
+      }
+
+      submitBtn.disabled=true; 
+      submitBtn.textContent='Submitting...';
+      
       const fd = new FormData();
-      fd.append('full_name', document.getElementById('fullName').value.trim());
-      fd.append('student_id', document.getElementById('studentId').value.trim());
-      fd.append('school_email', document.getElementById('schoolEmail').value.trim());
-      Object.entries(captures).forEach(([k,blob])=>fd.append(`face_${k}`,blob,`${k}.jpg`));
+      // --- SỬA CHÍNH: Đổi tên key thành CamelCase để khớp với Backend ---
+      fd.append('fullName', document.getElementById('fullName').value.trim());   // Sửa thành fullName
+      fd.append('studentId', document.getElementById('studentId').value.trim()); // Sửa thành studentId
+      fd.append('schoolEmail', document.getElementById('schoolEmail').value.trim()); // Sửa thành schoolEmail
+      
+      // --- SỬA CHÍNH: Backend đòi 'face_images' chứ không phải 'images' ---
+      Object.entries(captures).forEach(([k,blob]) => {
+        fd.append('face_images', blob, `${k}.jpg`); // Sửa thành face_images
+      });
+
       try{
-        const res = await fetch('http://localhost:5000/api/register',{method:'POST',body:fd}); 
+        const res = await fetch('http://localhost:8000/api/v1/students/register',{
+            method:'POST',
+            body:fd
+        }); 
         
-        if(!res.ok) throw new Error(await res.text());
+        if(!res.ok) {
+            const errorText = await res.text();
+            throw new Error(errorText || res.statusText);
+        }
+        
         showToast('Registered successfully!');
         e.target.reset();
-      }catch(err){showToast('Submit failed.');}
-      finally{submitBtn.disabled=false; submitBtn.textContent='Sign up';}
+        Object.keys(captures).forEach(k => delete captures[k]);
+        // Reset ảnh trên UI (tự thêm logic reset src nếu cần)
+        
+      } catch(err) {
+        console.error(err);
+        let msg = 'Submit failed.';
+        try {
+            const errObj = JSON.parse(err.message);
+            // Hiển thị chi tiết lỗi đầu tiên nếu có
+            if(errObj.detail && Array.isArray(errObj.detail)) {
+                const firstErr = errObj.detail[0];
+                msg = `${firstErr.loc.join('.')} : ${firstErr.msg}`;
+            }
+        } catch(e) {}
+        showToast(msg);
+      } finally {
+        submitBtn.disabled=false; 
+        submitBtn.textContent='Sign up';
+      }
     });
   </script>
 </body>

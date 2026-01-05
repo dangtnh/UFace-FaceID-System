@@ -52,8 +52,7 @@ async def update_me(
 
 @router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(
-    payload: CreateUserRequest,
-    # _=Depends(require_roles(["admin"]))
+    payload: CreateUserRequest, _=Depends(require_roles(["admin"]))
 ) -> Any:
     return await user_service.create_user(payload)
 

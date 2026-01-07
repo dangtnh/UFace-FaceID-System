@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     VECTOR_DB_PATH: str = "/app/data/vectors"
     VECTOR_DIM: int = 512
     DETECTION_CONF_THRESH: float = 0.80
-    RECOGNITION_THRESH: float = 0.7
+    RECOGNITION_THRESH: float = 0.8
 
     START_TIME_HOUR: int = 8
     START_TIME_MINUTE: int = 0

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 from fastapi import UploadFile
 from app.schemas.student import StudentCreate
 from app.repositories.student import student_repo
@@ -13,12 +13,10 @@ class StudentService:
         school_email: str,
         images: List[UploadFile],
     ):
-        # 1. Gọi Repo kiểm tra trùng
         existing = await student_repo.find_by_id_or_email(student_id, school_email)
         if existing:
             raise Exception("Sinh viên đã tồn tại (Trùng ID hoặc Email)")
 
-        # 2. Gọi Repo lưu DB
         new_student = await student_repo.create(
             data={
                 "fullName": full_name,
@@ -28,7 +26,6 @@ class StudentService:
             }
         )
 
-        # 3. Gọi AI Train
         if images:
             await face_service.register_student(
                 mssv=new_student.studentId, name=new_student.fullName, files=images
@@ -36,8 +33,22 @@ class StudentService:
 
         return new_student
 
-    async def get_all_students(self, skip: int, take: int):
-        return await student_repo.get_all(skip, take)
+    async def list_students(self, page: int = 1, limit: int = 10) -> Dict[str, Any]:
+        skip = (page - 1) * limit
+
+        students = await student_repo.list_students(skip=skip, take=limit)
+
+        total = await student_repo.count()
+
+        return {
+            "data": students,
+            "pagination": {
+                "page": page,
+                "limit": limit,
+                "total": total,
+                "totalPages": (total + limit - 1) // limit if limit > 0 else 1,
+            },
+        }
 
 
 student_service = StudentService()

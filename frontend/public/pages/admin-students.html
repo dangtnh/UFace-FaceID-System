@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== GLOBAL & LAYOUT (Copy from previous files) ===== */
+    /* ===== GLOBAL & LAYOUT ===== */
     body {
       margin: 0;
       font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -186,6 +186,8 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
+      /* Đảm bảo grid chiếm không gian nhưng không tràn */
+      min-height: 200px; 
     }
 
     .st-card {
@@ -211,13 +213,12 @@
       border: 2px solid #ffffff;
       box-shadow: 0 4px 10px rgba(37,99,235,0.15);
     }
-    /* Different avatar colors based on random logic or class */
     .st-avatar.orange { background: #fff7ed; color: #ea580c; }
     .st-avatar.green { background: #f0fdf4; color: #16a34a; }
     .st-avatar.purple { background: #faf5ff; color: #9333ea; }
 
-    .st-info { display: flex; flex-direction: column; }
-    .st-name { font-size: 14px; font-weight: 600; color: #1f2937; }
+    .st-info { display: flex; flex-direction: column; overflow: hidden; }
+    .st-name { font-size: 14px; font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .st-id { font-size: 11px; color: #6b7280; font-family: monospace; letter-spacing: 0.02em; }
 
     .st-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
@@ -234,7 +235,7 @@
     }
     .st-row { display: flex; justify-content: space-between; font-size: 12px; }
     .st-label { color: #9ca3af; }
-    .st-val { font-weight: 500; color: #374151; }
+    .st-val { font-weight: 500; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 
     .st-actions { margin-top: auto; display: flex; gap: 8px; }
     .btn-view {
@@ -245,6 +246,38 @@
       cursor: pointer; transition: 0.1s;
     }
     .btn-view:hover { background: #2563eb; color: #ffffff; }
+
+    /* ===== PAGINATION ===== */
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      align-items: center;
+    }
+    .page-btn {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      color: #6b7280;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.1s;
+    }
+    .page-btn:hover:not(:disabled) {
+      border-color: #2563eb; color: #2563eb;
+    }
+    .page-btn.active {
+      background: #2563eb; color: white; border-color: #2563eb;
+    }
+    .page-btn:disabled {
+      opacity: 0.5; cursor: not-allowed;
+    }
+    .page-info {
+        font-size: 12px; color: #6b7280; margin: 0 10px;
+    }
 
     /* ===== MODAL ===== */
     .modal-overlay {
@@ -287,32 +320,11 @@
       font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.03em;
     }
 
-    /* Course List in Modal */
-    .course-list { display: flex; flex-direction: column; gap: 10px; }
-    .course-item {
-      border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 12px;
-      background: #f9fafb;
-    }
-    .c-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .c-name { font-size: 13px; font-weight: 600; color: #111827; }
-    .c-code { font-size: 11px; color: #6b7280; }
-    
-    .c-stats { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
-    .c-rate { font-weight: 600; }
-    .c-rate.good { color: #16a34a; }
-    .c-rate.bad { color: #dc2626; }
-
-    .c-bar {
-      height: 6px; width: 100%; background: #e5e7eb; border-radius: 99px; overflow: hidden;
-    }
-    .c-bar-fill { height: 100%; border-radius: 99px; }
-
     @keyframes modalIn {
       from { opacity: 0; transform: translateY(10px) scale(0.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Responsive */
     @media (max-width: 960px) {
       .shell { grid-template-columns: 1fr; padding: 14px; }
       .sidebar { flex-direction: row; gap: 14px; }
@@ -333,7 +345,6 @@
       </div>
     </div>
     
-
     <nav class="sb-nav">
       <a href="/pages/admin-dashboard.html" class="sb-item">
         <div class="sb-icon">📊</div>
@@ -361,21 +372,7 @@
           <div class="sb-user-role">System Admin</div>
         </div>
       </div>
-
-      <button id="logoutBtn" title="Logout" style="
-        background: none; 
-        border: none; 
-        cursor: pointer; 
-        padding: 8px; 
-        border-radius: 8px; 
-        color: #ef4444; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center;
-        transition: background 0.2s;"
-        onmouseover="this.style.backgroundColor='#fee2e2'" 
-        onmouseout="this.style.backgroundColor='transparent'">
-    
+      <button id="logoutBtn" title="Logout" style="background:none;border:none;cursor:pointer;padding:8px;color:#ef4444;">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
@@ -399,33 +396,29 @@
         <span class="filter-label">Search:</span>
         <div class="filter-search">
           <span class="search-icon">🔍</span>
-          <input id="search-input" class="filter-input" type="text" placeholder="Name / Student ID..." style="width: 220px;" />
+          <input id="search-input" class="filter-input" type="text" placeholder="Name / Student ID..." style="width: 220px;" disabled title="Search function coming soon"/>
         </div>
       </div>
 
       <div class="filter-group">
         <span class="filter-label">Year:</span>
         <div class="pill-group">
-          <button class="pill active" data-filter="year" data-val="">All</button>
-          <button class="pill" data-filter="year" data-val="B1">B1</button>
-          <button class="pill" data-filter="year" data-val="B2">B2</button>
-          <button class="pill" data-filter="year" data-val="B3">B3</button>
+          <button class="pill active">All</button>
+          <button class="pill">B1</button>
+          <button class="pill">B2</button>
+          <button class="pill">B3</button>
         </div>
-
-        <select id="major-select" class="filter-select">
-          <option value="">All Majors</option>
-          <option value="ICT">ICT</option>
-          <option value="BI">BI</option>
-          <option value="AI">AI</option>
-          <option value="PHYS">PHYS</option>
-        </select>
-
-        <button id="btn-reset" class="btn-reset" type="button">Reset</button>
+        <button id="btn-refresh" class="btn-reset" type="button" onclick="fetchStudents(1)">Refresh</button>
       </div>
     </section>
 
     <section class="students-grid" id="students-container">
-      </section>
+      <p style="grid-column: 1/-1; text-align: center; color: #6b7280;">Loading students...</p>
+    </section>
+
+    <div class="pagination" id="pagination-controls">
+        </div>
+
   </main>
 </div>
 
@@ -439,122 +432,102 @@
       <div class="m-profile">
         <div class="m-avatar" id="m-avatar">A</div>
         <div>
-          <div class="m-name" id="m-name">Nguyen Van A</div>
-          <div class="m-id" id="m-id">BA11-001</div>
-          <div style="margin-top:4px; font-size:12px; color:#6b7280;" id="m-email">a@usth.edu.vn</div>
+          <div class="m-name" id="m-name">...</div>
+          <div class="m-id" id="m-id">...</div>
+          <div style="margin-top:4px; font-size:12px; color:#6b7280;" id="m-email">...</div>
         </div>
       </div>
 
       <div class="m-section-title">Attendance per Class</div>
       <div class="course-list" id="m-course-list">
-        </div>
+        <p style="font-size:12px; color:#9ca3af; font-style:italic;">
+           Attendance data is not yet available in API.
+        </p>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  // --- MOCK DATA ---
-  const studentsData = [
-    { 
-      id: "BI12-045", name: "Le Hoang Long", email: "longlh.bi12@usth.edu.vn", year: "B2", major: "ICT", 
-      risk: true, 
-      courses: [
-        { code: "ICT3.017", name: "Live Camera - Face Attendance", attended: 7, total: 12 },
-        { code: "ICT4.210", name: "Distributed Systems", attended: 10, total: 10 },
-        { code: "MATH2.301", name: "Linear Algebra", attended: 8, total: 12 } // Low
-      ]
-    },
-    { 
-      id: "BA13-102", name: "Pham Mai Anh", email: "anhpm.ba13@usth.edu.vn", year: "B1", major: "BI", 
-      risk: false,
-      courses: [
-        { code: "23BI-INF201", name: "Data Structures & Algo", attended: 8, total: 11 },
-        { code: "CHEM1.102", name: "General Chemistry", attended: 12, total: 12 }
-      ]
-    },
-    { 
-      id: "AI11-009", name: "Nguyen Huu Dat", email: "datnh.ai11@usth.edu.vn", year: "B3", major: "AI", 
-      risk: true,
-      courses: [
-        { code: "AI4.102", name: "Intro to Machine Learning", attended: 5, total: 8 },
-        { code: "AI4.205", name: "Deep Learning", attended: 9, total: 10 }
-      ]
-    },
-    { 
-      id: "BI12-156", name: "Tran Thu Huong", email: "huongtt.bi12@usth.edu.vn", year: "B2", major: "ICT", 
-      risk: false,
-      courses: [
-        { code: "ICT3.017", name: "Live Camera - Face Attendance", attended: 9, total: 13 },
-        { code: "WEB2.101", name: "Web Application Dev", attended: 14, total: 15 }
-      ]
-    },
-    { 
-      id: "PH13-022", name: "Vo Minh Tuan", email: "tuanvm.ph13@usth.edu.vn", year: "B1", major: "PHYS", 
-      risk: false,
-      courses: [
-        { code: "PHY2.204", name: "Physics Lab - Optics", attended: 6, total: 6 },
-        { code: "MATH1.101", name: "Calculus I", attended: 11, total: 12 }
-      ]
-    },
-    { 
-      id: "AI11-088", name: "Doan Hai Yen", email: "yendh.ai11@usth.edu.vn", year: "B3", major: "AI", 
-      risk: false,
-      courses: [
-        { code: "AI4.102", name: "Intro to Machine Learning", attended: 8, total: 8 },
-        { code: "ICT4.210", name: "Distributed Systems", attended: 10, total: 10 }
-      ]
-    }
-  ];
+  // --- CONFIG ---
+  const API_URL = "http://localhost:8000/api/v1/students/"; 
+  let currentPage = 1;
+  const LIMIT = 10; 
 
-  // --- RENDER FUNCTIONS ---
   const gridContainer = document.getElementById('students-container');
-  const modal = document.getElementById('studentModal');
-  const modalClose = document.getElementById('modalClose');
+  const paginationContainer = document.getElementById('pagination-controls');
+  
+  let currentStudentsList = [];
 
+  // --- HELPERS ---
   function getAvatarColor(char) {
+    if (!char) return 'purple';
     const code = char.charCodeAt(0);
     if (code % 3 === 0) return 'orange';
     if (code % 3 === 1) return 'green';
     return 'purple';
   }
 
+  // --- MAIN FETCH FUNCTION ---
+  async function fetchStudents(page = 1) {
+    currentPage = page;
+    gridContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #6b7280;">Loading...</p>`;
+    
+    try {
+      const res = await fetch(`${API_URL}?page=${page}&limit=${LIMIT}`);
+      if (!res.ok) throw new Error("Failed to fetch data");
+      
+      const json = await res.json();
+      
+      const students = json.data || [];
+      const pagination = json.pagination || { totalPages: 1 };
+      
+      currentStudentsList = students; 
+      
+      renderStudents(students);
+      renderPagination(pagination.totalPages, page);
+
+    } catch (err) {
+      console.error(err);
+      gridContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #dc2626;">Error loading students. Please try again.</p>`;
+    }
+  }
+
+  // --- RENDER GRID ---
   function renderStudents(list) {
     gridContainer.innerHTML = "";
-    if(list.length === 0) {
-      gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #9ca3af; padding: 40px;">No students found matching filters.</div>`;
+    
+    if (list.length === 0) {
+      gridContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #9ca3af;">No students found.</p>`;
       return;
     }
 
     list.forEach(student => {
-      const firstChar = student.name.charAt(0).toUpperCase();
+      const name = student.fullName || "Unknown";
+      const id = student.studentId || "N/A";
+      const email = student.schoolEmail || "";
+      const firstChar = name.charAt(0).toUpperCase();
       const colorClass = getAvatarColor(firstChar);
-      
-      const riskBadge = student.risk 
-        ? `<span class="st-badge badge-risk">Attendance Risk</span>` 
-        : '';
 
       const cardHTML = `
         <div class="st-card">
           <div class="st-header">
             <div class="st-avatar ${colorClass}">${firstChar}</div>
             <div class="st-info">
-              <div class="st-name">${student.name}</div>
-              <div class="st-id">${student.id}</div>
+              <div class="st-name" title="${name}">${name}</div>
+              <div class="st-id">${id}</div>
               <div class="st-badges">
-                <span class="st-badge badge-year">${student.year}</span>
-                <span class="st-badge badge-major">${student.major}</span>
-                ${riskBadge}
-              </div>
+                <span class="st-badge badge-year">B?</span> <span class="st-badge badge-major">Major?</span> </div>
             </div>
           </div>
           <div class="st-body">
             <div class="st-row">
               <span class="st-label">Email</span>
-              <span class="st-val" style="font-size:11px;">${student.email}</span>
+              <span class="st-val" title="${email}">${email}</span>
             </div>
             <div class="st-row">
-              <span class="st-label">Enrolled</span>
-              <span class="st-val">${student.courses.length} Classes</span>
+              <span class="st-label">Status</span>
+              <span class="st-val" style="color: #16a34a;">Active</span>
             </div>
           </div>
           <div class="st-actions">
@@ -566,94 +539,54 @@
     });
   }
 
-  // --- FILTER LOGIC ---
-  const searchInput = document.getElementById('search-input');
-  const majorSelect = document.getElementById('major-select');
-  const yearPills = document.querySelectorAll('.pill[data-filter="year"]');
-  const resetBtn = document.getElementById('btn-reset');
-
-  let activeYear = ""; // "" = All
-
-  function applyFilters() {
-    const term = searchInput.value.toLowerCase().trim();
-    const major = majorSelect.value;
+  // --- RENDER PAGINATION ---
+  function renderPagination(totalPages, current) {
+    paginationContainer.innerHTML = "";
     
-    const filtered = studentsData.filter(s => {
-      const matchSearch = s.name.toLowerCase().includes(term) || s.id.toLowerCase().includes(term);
-      const matchMajor = major === "" || s.major === major;
-      const matchYear = activeYear === "" || s.year === activeYear;
-      return matchSearch && matchMajor && matchYear;
-    });
+    if (totalPages <= 1) return; 
 
-    renderStudents(filtered);
+    // Nút Prev
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "page-btn";
+    prevBtn.innerHTML = "&lt;";
+    prevBtn.disabled = current === 1;
+    prevBtn.onclick = () => fetchStudents(current - 1);
+    paginationContainer.appendChild(prevBtn);
+
+    // Thông tin trang (Page X of Y)
+    const info = document.createElement("span");
+    info.className = "page-info";
+    info.textContent = `Page ${current} of ${totalPages}`;
+    paginationContainer.appendChild(info);
+
+    // Nút Next
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "page-btn";
+    nextBtn.innerHTML = "&gt;";
+    nextBtn.disabled = current === totalPages;
+    nextBtn.onclick = () => fetchStudents(current + 1);
+    paginationContainer.appendChild(nextBtn);
   }
 
-  // Event Listeners for Filters
-  searchInput.addEventListener('input', applyFilters);
-  majorSelect.addEventListener('change', applyFilters);
-
-  yearPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      yearPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      activeYear = pill.dataset.val;
-      applyFilters();
-    });
-  });
-
-  resetBtn.addEventListener('click', () => {
-    searchInput.value = "";
-    majorSelect.value = "";
-    activeYear = "";
-    yearPills.forEach(p => p.classList.remove('active'));
-    document.querySelector('.pill[data-val=""]').classList.add('active');
-    applyFilters();
-  });
-
   // --- MODAL LOGIC ---
-  window.openModal = function(studentId) {
-    const s = studentsData.find(x => x.id === studentId);
+  const modal = document.getElementById('studentModal');
+  const modalClose = document.getElementById('modalClose');
+
+  window.openModal = function(dbId) {
+    const s = currentStudentsList.find(x => x.id == dbId);
     if (!s) return;
 
-    // Populate Info
-    document.getElementById('m-name').textContent = s.name;
-    document.getElementById('m-id').textContent = s.id + " • " + s.major + " • " + s.year;
-    document.getElementById('m-email').textContent = s.email;
+    // Fill thông tin vào Modal
+    document.getElementById('m-name').textContent = s.fullName;
+    document.getElementById('m-id').textContent = s.studentId;
+    document.getElementById('m-email').textContent = s.schoolEmail;
     
+    const firstChar = s.fullName.charAt(0).toUpperCase();
     const av = document.getElementById('m-avatar');
-    av.textContent = s.name.charAt(0);
-    av.className = `m-avatar ${getAvatarColor(s.name.charAt(0))}`;
+    av.textContent = firstChar;
+    av.className = `m-avatar ${getAvatarColor(firstChar)}`;
 
-    // Populate Courses
-    const listContainer = document.getElementById('m-course-list');
-    listContainer.innerHTML = "";
-    
-    s.courses.forEach(c => {
-      const percent = Math.round((c.attended / c.total) * 100);
-      let color = "#22c55e"; // Green
-      let rateClass = "good";
-      
-      if (percent < 70) { color = "#ef4444"; rateClass = "bad"; }
-      else if (percent < 85) { color = "#f97316"; } // Orange
-
-      const item = `
-        <div class="course-item">
-          <div class="c-header">
-            <span class="c-name">${c.name}</span>
-            <span class="c-code">${c.code}</span>
-          </div>
-          <div class="c-stats">
-            <span>Attended: <b>${c.attended}/${c.total}</b></span>
-            <span class="c-rate ${rateClass}">${percent}%</span>
-          </div>
-          <div class="c-bar">
-            <div class="c-bar-fill" style="width: ${percent}%; background: ${color};"></div>
-          </div>
-        </div>
-      `;
-      listContainer.innerHTML += item;
-    });
-
+    // Mở Modal
     modal.classList.add('open');
   }
 
@@ -662,8 +595,10 @@
     if (e.target === modal) modal.classList.remove('open');
   });
 
-  // Initial Render
-  renderStudents(studentsData);
+  // --- INIT ---
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchStudents(1); // Load trang 1 ngay khi vào web
+  });
 
 </script>
 <script src="/assets/js/logout.js"></script>

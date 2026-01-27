@@ -8,11 +8,14 @@ class StudentRepository:
             where={"OR": [{"studentId": student_id}, {"schoolEmail": email}]}
         )
 
-    async def create(self, data: dict):
+    async def create_student(self, data: dict):
         return await prisma.student.create(data=data)
 
-    async def get_all(self, skip: int = 0, take: int = 100):
+    async def list_students(self, skip: int = 0, take: int = 100):
         return await prisma.student.find_many(skip=skip, take=take)
+
+    async def count(self) -> int:
+        return await prisma.student.count()
 
     async def delete(self, student_id: str):
         return await prisma.student.delete(where={"studentId": student_id})

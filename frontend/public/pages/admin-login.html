@@ -31,6 +31,7 @@
     .uface-bg-left {
         background-image: linear-gradient(to bottom right, #3b82f6, #dbeafe, #ffffff);
         background-size: cover;
+        background-position: top left;
     }
 
     .input {
@@ -39,14 +40,14 @@
       border-radius: 12px;
       padding: 12px 14px;
       outline: none;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85); /* Tăng độ đục một chút để dễ đọc trên nền xanh */
       transition: all 0.2s;
       font-size: 14px;
       font-weight: 400; 
     }
     .input:focus {
-      box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.5);
-      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(191, 219, 254, 0.6);
+      border-color: #2563eb;
       background: #ffffff;
     }
     
@@ -72,57 +73,47 @@
 
     .decor { position:absolute; inset:0; pointer-events:none; z-index:0; overflow: hidden;}
     .blob { position:absolute; filter:blur(80px); opacity:0.6; border-radius:999px; mix-blend-mode:multiply; animation:floaty 20s infinite alternate; }
-    .blob-1 { width:400px; height:400px; top:-100px; left:-100px; background:#60a5fa; }
-    .blob-2 { width:350px; height:350px; bottom:-50px; right:-50px; background:#a78bfa; animation-delay: -5s; }
-    .blob-3 { width:300px; height:300px; top:40%; left:40%; background:#66e2d5; animation-delay: -10s; opacity: 0.4; }
-    @keyframes floaty{ 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(30px, -30px) scale(1.1); } }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
-    }
-    .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-    .stat-row:last-child { border-bottom: none; }
-    .blink { width:8px; height:8px; background:#22c55e; border-radius:50%; animation:blink 1.5s infinite; }
-    @keyframes blink { 50% { opacity:0.3; } }
+    
+    /* Màu blob sáng hơn để hợp với nền xanh */
+    .blob-1 { width:400px; height:400px; top:-100px; left:-100px; background:#ffffff; } 
+    .blob-2 { width:350px; height:350px; bottom:5%; right:5%; background:#a5f3fc; animation-delay: -5s; }
+    
+    @keyframes floaty{ 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(20px, -20px) scale(1.1); } }
   </style>
 </head>
 
 <body class="h-screen overflow-hidden text-slate-800">
 
-  <div class="grid h-full grid-cols-1 lg:grid-cols-[30%_70%]">
+  <div class="grid h-full grid-cols-1 lg:grid-cols-[40%_60%]">
     
-    <div class="relative flex flex-col justify-center items-center p-6 lg:p-8 uface-bg-left overflow-hidden shadow-[10px_0_30px_rgba(0,0,0,0.1)] z-20">
+    <div class="relative flex flex-col justify-center items-center p-6 lg:p-10 uface-bg-left overflow-hidden shadow-[10px_0_30px_rgba(0,0,0,0.1)] z-20">
         
         <div class="decor">
             <div class="blob blob-1"></div>
             <div class="blob blob-2"></div>
-            <div class="blob blob-3"></div>
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC40KSIvPjwvc3ZnPg==')] opacity-50"></div>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4zKSIvPjwvc3ZnPg==')] opacity-40"></div>
         </div>
 
-        <div class="w-full max-w-[360px] relative z-10 bg-white/60 backdrop-blur-xl border border-white/40 p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <div class="w-full max-w-[380px] relative z-10 bg-white/60 backdrop-blur-xl border border-white/60 p-10 rounded-3xl shadow-xl transition-all hover:shadow-2xl hover:bg-white/70">
             
             <div class="mb-8 flex items-center gap-3">
                 <img src="/images/logo.png" alt="UFace" class="h-9 w-auto object-contain drop-shadow-sm" />
-                <span class="text-2xl font-semibold tracking-tight text-blue-700">UFace</span>
+                <span class="text-2xl font-semibold tracking-tight text-blue-800">UFace</span>
                 <div class="h-6 w-px bg-slate-400/50"></div>
                 <img src="/images/usth_logo.png" alt="USTH" class="h-8 w-auto object-contain opacity-90" />
             </div>
 
-            <h1 class="mb-2 text-3xl font-semibold tracking-tight text-gray-900">Welcome back</h1>
-            <p class="mb-8 text-gray-600 text-sm">Enter your credentials to access the admin panel.</p>
+            <h1 class="mb-2 text-3xl font-semibold tracking-tight text-slate-900">Welcome back</h1>
+            <p class="mb-8 text-slate-600 text-sm">Enter your credentials to access the admin panel.</p>
 
             <form id="admForm" class="space-y-5">
                 <div>
-                    <label class="mb-1.5 block text-sm text-gray-700">Email address</label>
+                    <label class="mb-1.5 block text-sm text-slate-700 font-medium">Email address</label>
                     <input type="email" id="admEmail" class="input" placeholder="admin@usth.edu.vn" required />
                 </div>
                 
                 <div>
-                    <label class="mb-1.5 block text-sm text-gray-700">Password</label>
+                    <label class="mb-1.5 block text-sm text-slate-700 font-medium">Password</label>
                     <input type="password" id="admPass" class="input" placeholder="••••••••" required />
                 </div>
 
@@ -132,7 +123,7 @@
                 </button>
             </form>
 
-            <div class="mt-8 text-center text-xs text-gray-500 leading-relaxed">
+            <div class="mt-8 text-center text-xs text-slate-500 font-medium leading-relaxed">
                 Protected by UFace Security System v2.0<br>
                 &copy; 2024 USTH. All rights reserved.
             </div>
@@ -141,7 +132,7 @@
 
     <div class="hidden lg:block relative h-full w-full bg-slate-900">
         <img 
-            src="/images/usth-banner2.png" 
+            src="/images/usth-banner3.jpg" 
             alt="USTH Banner" 
             class="absolute inset-0 w-full h-full object-cover opacity-95"
             style="object-position: center top;" 

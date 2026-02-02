@@ -508,7 +508,12 @@
       const email = student.schoolEmail || "";
       const firstChar = name.charAt(0).toUpperCase();
       const colorClass = getAvatarColor(firstChar);
+      const isActive = (student.status === "active");
 
+      const statusText = isActive ? "Active" : "Inactive";
+      const statusColor = isActive ? "#16a34a" : "#ef4444"; 
+      const statusBg = isActive ? "#ecfdf5" : "#fef2f2";     
+      const statusBorder = isActive ? "#d1fae5" : "#fee2e2"; 
       const cardHTML = `
         <div class="st-card">
           <div class="st-header">
@@ -527,7 +532,7 @@
             </div>
             <div class="st-row">
               <span class="st-label">Status</span>
-              <span class="st-val" style="color: #16a34a;">Active</span>
+              <span class="st-val" style="color: ${statusColor};">${statusText}</span>
             </div>
           </div>
           <div class="st-actions">

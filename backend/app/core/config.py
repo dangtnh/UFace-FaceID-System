@@ -26,9 +26,11 @@ class Settings(BaseSettings):
     DETECTION_CONF_THRESH: float = 0.80
     RECOGNITION_THRESH: float = 0.8
 
-    START_TIME_HOUR: int = 8
-    START_TIME_MINUTE: int = 0
+    START_TIME_HOUR: int = 15
+    START_TIME_MINUTE: int = 15
     LATE_THRESHOLD_MINUTES: int = 15
+    END_TIME_HOUR: int = 17
+    END_TIME_MINUTE: int = 15
 
     SECRET_KEY: str = os.getenv("SECRET_KEY", "unsafe-secret-key-change-me-please")
     ALGORITHM: str = "HS256"

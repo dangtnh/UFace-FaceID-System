@@ -15,9 +15,9 @@ class StudentService:
     ):
         existing = await student_repo.find_by_id_or_email(student_id, school_email)
         if existing:
-            raise Exception("Sinh viên đã tồn tại (Trùng ID hoặc Email)")
+            raise Exception("Student have already existed (ID duplicated)")
 
-        new_student = await student_repo.create(
+        new_student = await student_repo.create_student(
             data={
                 "fullName": full_name,
                 "studentId": student_id,

@@ -56,6 +56,19 @@
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
       if (!matchesKw || !matchesStatus) return;
 
+      // --- SỬA LOGIC UI UI TAG Ở ĐÂY ---
+      let chipClass = "chip chip-green";
+      let chipText = "Present";
+      
+      if (item.status === "late") {
+          chipClass = "chip chip-orange";
+          chipText = "Late";
+      } else if (item.status === "absent") {
+          // Thêm style màu đỏ cho trạng thái vắng mặt
+          chipClass = "chip bg-red-100 text-red-700 border-red-200"; 
+          chipText = "Absent";
+      }
+
       const row = document.createElement("div");
       row.className = "flex items-start gap-3 p-2 border rounded-xl bg-white/70";
       row.innerHTML = `
@@ -68,8 +81,8 @@
           </div>
           <p class="text-xs text-slate-600 truncate">${item.id}</p>
         </div>
-        <span class="${item.status === "late" ? "chip chip-orange" : "chip chip-green"}">
-          ${item.status === "late" ? "Late" : "Present"}
+        <span class="${chipClass}">
+          ${chipText}
         </span>
       `;
       listWrap.appendChild(row);
@@ -83,23 +96,36 @@
     if (present.has(id)) return;
     present.set(id, { id, name, status, at, avatar });
     renderList();
-    const msgStatus = item.status === 'late' ? 'Muộn' : 'Đúng giờ';
-    toast(`✅ ${item.name} - ${msgStatus}`, item.status === 'late' ? 'warning' : 'success');
+    
+    // --- SỬA LOGIC HIỂN THỊ TOAST Ở ĐÂY ---
+    let msgText = "Đúng giờ";
+    let toastType = "success";
+    let icon = "✅";
+
+    if (status === "late") {
+        msgText = "Đi muộn";
+        toastType = "warning";
+        icon = "⚠️";
+    } else if (status === "absent") {
+        msgText = "Vắng mặt (Quá giờ)";
+        toastType = "error";
+        icon = "❌";
+    }
+
+    toast(`${icon} ${name} - ${msgText}`, toastType);
   }
 
   // =================================================================
-  // HÀM VẼ KHUNG (Đã sửa hiển thị Score dạng 0.xx)
+  // HÀM VẼ KHUNG (Giữ nguyên)
   // =================================================================
   function drawBox(result) {
       if (!ctx || !canvasEl || !videoEl) return;
 
-      // 1. FIX LỖI TREO KHUNG KHI TẮT CAM
       if (videoEl.paused || videoEl.ended || !videoEl.srcObject) {
           ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
           return;
       }
 
-      // 2. Đồng bộ kích thước
       if (videoEl.videoWidth && canvasEl.width !== videoEl.videoWidth) {
           canvasEl.width = videoEl.videoWidth;
           canvasEl.height = videoEl.videoHeight;
@@ -112,42 +138,35 @@
           const width = x2 - x1;
           const height = y2 - y1;
 
-          // 3. FIX CHỮ NGƯỢC: Lật tọa độ X (Mirror)
           const mirroredX = canvasEl.width - x2;
 
           const isMatch = result.status === 'Match' || result.status === 'success';
           const color = isMatch ? '#00E676' : '#FFD600'; 
           
-          // Vẽ khung
           ctx.beginPath();
           ctx.lineWidth = 4;
           ctx.strokeStyle = color;
           ctx.roundRect(mirroredX, y1, width, height, 8); 
           ctx.stroke();
 
-          // 4. FIX MSSV + FORMAT SCORE (0.96)
-          // --- THAY ĐỔI TẠI ĐÂY ---
-          const scoreDisplay = result.score.toFixed(2); // VD: 0.96
+          const scoreDisplay = result.score.toFixed(2); 
           
           let labelText = result.name;
           if (result.mssv && result.mssv !== "Unknown" && result.mssv !== "") {
               labelText = `${result.mssv} - ${result.name}`;
           }
           
-          // Format text: "23BI... - Tên (0.96)"
           const text = `${labelText} (${scoreDisplay})`;
           
           ctx.font = "bold 18px sans-serif";
           const textMetrics = ctx.measureText(text);
           const textHeight = 28;
 
-          // Vẽ nền chữ
           ctx.fillStyle = color;
           ctx.beginPath();
           ctx.roundRect(mirroredX, y1 - textHeight - 4, textMetrics.width + 12, textHeight, 4);
           ctx.fill();
 
-          // Vẽ chữ
           ctx.fillStyle = '#000';
           ctx.textBaseline = 'middle';
           ctx.fillText(text, mirroredX + 6, y1 - (textHeight/2) - 3);
@@ -155,7 +174,7 @@
   }
 
   // =================================================================
-  // HÀM GỌI API
+  // HÀM GỌI API 
   // =================================================================
   async function sendFrameToAPI(blob) {
     if (isProcessingFrame) return;
@@ -178,10 +197,16 @@
       drawBox(result);
 
       if (result.status === "success" || result.status === "Match") {
+        
+        // --- SỬA LOGIC NHẬN TRẠNG THÁI TỪ BE Ở ĐÂY ---
+        let mappedStatus = "present";
+        if (result.attendance_status === "LATE") mappedStatus = "late";
+        else if (result.attendance_status === "ABSENT") mappedStatus = "absent";
+
         pushPresence({
           id: result.mssv,
           name: result.name,
-          status: result.attendance_status === "LATE" ? "late" : "present",
+          status: mappedStatus,
           at: Date.now(),
         });
 

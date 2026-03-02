@@ -31,8 +31,8 @@
     <span class="blob blob-3"></span>
   </div>
 
-  <div class="grid min-h-screen grid-cols-1 lg:grid-cols-2 relative z-10">
-    <div class="flex items-center justify-center p-6 lg:p-10 bg-white/70 backdrop-blur-md">
+  <div class="grid min-h-screen grid-cols-1 lg:grid-cols-5 relative z-10">
+    <div class="lg:col-span-2 flex items-center justify-center p-6 lg:p-10 bg-white/70 backdrop-blur-md">
       <div class="w-full max-w-lg">
         <div class="mb-8 flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <div class="flex items-stretch justify-center p-6 lg:px-10 lg:pb-10 lg:pt-24">
+    <div class="lg:col-span-3 flex items-stretch justify-center p-6 lg:px-10 lg:pb-10 lg:pt-24">
       <div id="faceCard" class="card w-full max-w-4xl p-4 md:p-5 shadow-lg">
         <div class="mb-3 flex items-center justify-between gap-3">
           <div>
@@ -87,17 +87,19 @@
         </div>
 
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-12 items-stretch">
-          <div class="relative col-span-7 overflow-hidden rounded-xl bg-black/5 flex flex-col">
+          
+          <div class="relative lg:col-span-8 flex flex-col">
             <div class="relative w-full rounded-xl overflow-hidden flex-1 min-h-[460px] md:min-h-[540px] lg:min-h-[600px] cam-wrap">
               <video id="video" autoplay playsinline class="absolute inset-0 w-full h-full object-cover rounded-xl"></video>
               <canvas id="canvas" class="hidden"></canvas>
+              <div class="pointer-events-none absolute left-3 top-3 rounded bg-black/50 px-2 py-1 text-xs text-white">
+                <span id="statusBadge">Camera's off</span>
+              </div>
+              <div class="pointer-events-none absolute bottom-3 right-3 rounded bg-black/50 px-2 py-1 text-xs text-white">
+                Keep light, do not cover face
+              </div>
             </div>
-            <div class="pointer-events-none absolute left-3 top-3 rounded bg-black/50 px-2 py-1 text-xs text-white">
-              <span id="statusBadge">Camera's off</span>
-            </div>
-            <div class="pointer-events-none absolute bottom-3 right-3 rounded bg-black/50 px-2 py-1 text-xs text-white">
-              Keep light, do not cover face
-            </div>
+            
             <div class="mt-3 rounded-xl border border-gray-200 bg-white/70 p-3">
               <div class="mb-2 text-[13px] font-semibold text-slate-800">Tips for better face photos</div>
               <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[12px] text-slate-600">
@@ -109,22 +111,22 @@
             </div>
           </div>
 
-          <div class="col-span-5">
+          <div class="lg:col-span-4">
             <div class="grid grid-cols-2 gap-3">
               <template id="angleCardTemplate">
                 <div class="thumb hover:shadow-md transition">
-                  <div class="mb-2 text-sm font-medium angle-title text-gray-700">—</div>
+                  <div class="mb-2 text-[13px] sm:text-sm font-medium angle-title text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis tracking-tight">—</div>
                   <div class="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
                     <img class="h-full w-full object-cover angle-img hidden" />
                     <div class="absolute inset-0 grid place-content-center text-xs text-gray-400 angle-placeholder">Not taken yet</div>
                   </div>
-                  <div class="mt-2 flex gap-2">
-                    <button type="button" class="btn-secondary text-xs angle-capture">Take</button>
-                    <button type="button" class="btn-secondary text-xs angle-retake hidden">Retake</button>
+                  <div class="mt-2 flex flex-wrap gap-1.5 w-full">
+                    <button type="button" class="btn-secondary text-xs angle-capture flex-1 justify-center min-w-[60px] px-1 py-1.5">Take</button>
+                    <button type="button" class="btn-secondary text-xs angle-retake hidden flex-1 justify-center min-w-[60px] px-1 py-1.5">Retake</button>
                   </div>
                 </div>
               </template>
-              <div id="anglesContainer" class="grid grid-cols-2 gap-3 col-span-2"></div>
+              <div id="anglesContainer" class="grid grid-cols-2 gap-2 lg:gap-3 col-span-2"></div>
             </div>
           </div>
         </div>
@@ -132,7 +134,22 @@
     </div>
   </div>
 
-  <div id="toast" class="pointer-events-none fixed left-1/2 top-4 z-50 hidden -translate-x-1/2 rounded-xl bg-black px-4 py-2 text-sm text-white"></div>
+  <div id="toast" class="pointer-events-none fixed left-1/2 top-4 z-50 hidden -translate-x-1/2 rounded-xl bg-black px-4 py-2 text-sm text-white transition-opacity duration-300"></div>
+
+  <div id="errorModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div id="errorModalContent" class="relative w-full max-w-sm transform overflow-hidden rounded-2xl bg-white/90 backdrop-blur-md p-6 text-center shadow-2xl transition-all scale-95 opacity-0 border border-white/50">
+      <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 shadow-inner">
+        <svg class="h-7 w-7 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 id="errorModalTitle" class="mb-2 text-xl font-bold text-gray-900">Registration Failed</h3>
+      <p id="errorModalMessage" class="mb-6 text-sm font-medium text-gray-600">This student has already registered in the system.</p>
+      <button type="button" onclick="closeErrorModal()" class="w-full rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white shadow-md hover:bg-gray-800 transition-all hover:shadow-lg active:scale-95">
+        Close
+      </button>
+    </div>
+  </div>
 
   <script>
     const angles = [
@@ -153,6 +170,34 @@
     const form = document.getElementById('registerForm');
     const toast = document.getElementById('toast');
     const submitBtn = document.getElementById('submitBtn');
+
+    const errorModal = document.getElementById('errorModal');
+    const errorModalContent = document.getElementById('errorModalContent');
+    
+    function showErrorModal(title, message) {
+      document.getElementById('errorModalTitle').textContent = title;
+      document.getElementById('errorModalMessage').textContent = message;
+      
+      errorModal.classList.remove('hidden');
+      errorModal.classList.add('flex');
+      
+      setTimeout(() => {
+        errorModal.classList.remove('opacity-0');
+        errorModalContent.classList.remove('scale-95', 'opacity-0');
+        errorModalContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    function closeErrorModal() {
+      errorModal.classList.add('opacity-0');
+      errorModalContent.classList.remove('scale-100', 'opacity-100');
+      errorModalContent.classList.add('scale-95', 'opacity-0');
+      
+      setTimeout(() => {
+        errorModal.classList.add('hidden');
+        errorModal.classList.remove('flex');
+      }, 300);
+    }
 
     function showToast(msg, ms=2000){toast.textContent=msg;toast.classList.remove('hidden');setTimeout(()=>toast.classList.add('hidden'),ms)}
     function setBadge(text){statusBadge.textContent=text}
@@ -178,14 +223,41 @@
       Object.entries(angleCards).forEach(([k,refs])=>refs.wrap.classList.toggle('active',k===key))
     }
 
+    function stopCamera() {
+      if (!stream) return;
+      
+      stream.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+      stream = null;
+      
+      setBadge("Camera's off");
+      captureBtn.classList.add('hidden');
+      
+      openCameraBtn.textContent = "Open camera";
+      openCameraBtn.classList.remove("text-red-600", "bg-red-50", "border-red-300");
+      showToast("Camera stopped");
+    }
+
     async function openCamera(){
-      if(stream) return;
+      if(stream) {
+          stopCamera();
+          return;
+      }
+      
       try{
-        stream = await navigator.mediaDevices.getUserMedia({ video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false });
+        stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+            audio: false 
+        });
         video.srcObject = stream;
+        
         setBadge("Camera's on");
         captureBtn.classList.remove('hidden');
         highlightActive('front');
+        
+        openCameraBtn.textContent = "Stop camera";
+        openCameraBtn.classList.add("text-red-600", "bg-red-50", "border-red-300");
+        
       }catch(e){
         console.error(e);
         showToast('Unable to open camera. Use HTTPS/localhost and grant permission.');
@@ -219,7 +291,6 @@
     form.addEventListener('submit', async (e)=>{
       e.preventDefault();
       
-      // Validate: Bắt buộc chụp đủ 5 ảnh
       if(Object.keys(captures).length < 5){
         showToast('Please capture all 5 angles.'); 
         return;
@@ -229,14 +300,12 @@
       submitBtn.textContent='Submitting...';
       
       const fd = new FormData();
-      // --- SỬA CHÍNH: Đổi tên key thành CamelCase để khớp với Backend ---
-      fd.append('fullName', document.getElementById('fullName').value.trim());   // Sửa thành fullName
-      fd.append('studentId', document.getElementById('studentId').value.trim()); // Sửa thành studentId
-      fd.append('schoolEmail', document.getElementById('schoolEmail').value.trim()); // Sửa thành schoolEmail
+      fd.append('fullName', document.getElementById('fullName').value.trim());   
+      fd.append('studentId', document.getElementById('studentId').value.trim()); 
+      fd.append('schoolEmail', document.getElementById('schoolEmail').value.trim()); 
       
-      // --- SỬA CHÍNH: Backend đòi 'face_images' chứ không phải 'images' ---
       Object.entries(captures).forEach(([k,blob]) => {
-        fd.append('face_images', blob, `${k}.jpg`); // Sửa thành face_images
+        fd.append('face_images', blob, `${k}.jpg`); 
       });
 
       try{
@@ -252,21 +321,34 @@
         
         showToast('Registered successfully!');
         e.target.reset();
-        Object.keys(captures).forEach(k => delete captures[k]);
-        // Reset ảnh trên UI (tự thêm logic reset src nếu cần)
+        Object.keys(captures).forEach(k => {
+            delete captures[k];
+            angleCards[k].img.src = "";
+            angleCards[k].img.classList.add('hidden');
+            angleCards[k].ph.classList.remove('hidden');
+            angleCards[k].btnRetake.classList.add('hidden');
+        });
         
       } catch(err) {
         console.error(err);
-        let msg = 'Submit failed.';
+        
+        let modalTitle = 'Registration Failed';
+        let modalMessage = 'Student has already registered in the system.';
+        
         try {
             const errObj = JSON.parse(err.message);
-            // Hiển thị chi tiết lỗi đầu tiên nếu có
-            if(errObj.detail && Array.isArray(errObj.detail)) {
-                const firstErr = errObj.detail[0];
-                msg = `${firstErr.loc.join('.')} : ${firstErr.msg}`;
+            if(errObj.detail) {
+                if (typeof errObj.detail === 'string') {
+                    modalMessage = errObj.detail;
+                } else if (Array.isArray(errObj.detail)) {
+                    const firstErr = errObj.detail[0];
+                    modalMessage = `${firstErr.loc.join('.')} : ${firstErr.msg}`;
+                }
             }
         } catch(e) {}
-        showToast(msg);
+        
+        showErrorModal(modalTitle, modalMessage);
+        
       } finally {
         submitBtn.disabled=false; 
         submitBtn.textContent='Sign up';

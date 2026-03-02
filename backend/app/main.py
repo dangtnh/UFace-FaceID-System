@@ -7,30 +7,26 @@ from prisma import Prisma
 from app.core.database import prisma
 
 
-# --- THAY ĐỔI 2: Dùng lifespan để quản lý kết nối DB ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
         await prisma.connect()
-        print("✅ Connected to Database via Prisma")
+        print("Connected to Database via Prisma")
     except Exception as e:
-        print(f"❌ Could not connect to Database: {e}")
+        print(f"Could not connect to Database: {e}")
 
     yield
 
     if prisma.is_connected():
         await prisma.disconnect()
-        print("🛑 Disconnected from Database")
+        print("Disconnected from Database")
 
 
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
-# --------------------------------
 
 # Cấu hình CORS
 app.add_middleware(
     CORSMiddleware,
-    # LƯU Ý: Khi deploy production, hãy thay ["*"] bằng domain cụ thể của frontend
-    # Ví dụ: allow_origins=["https://my-frontend.com", "http://localhost:3000"]
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
